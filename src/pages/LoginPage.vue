@@ -15,18 +15,25 @@
       </div>
     </header>
     <div class="main-content">
-      <div class="title">
-        <h1 style="font-size: 2.8em;">Medi-Insight</h1>
-        <p style="font-size: 1.3em;">AI赋能，医疗预测系统</p>
-      </div>
+      <Transition name="slide-fade">
+        <div v-if=isshow class="title">
+          <h1 style="font-size: 2.8em;">Medi-Insight</h1>
+          <p style="font-size: 1.3em;">AI赋能，医疗预测系统</p>
+        </div>
+      </Transition>
       <div></div>
-      <img src="../assets/Medi-Insight.png" alt="" style="height: 100%;">
+      <img src="../assets/glob.png" alt="" style="height: 100%;">
+      <img src="../assets/net.png" alt="" style="position: absolute; right: -2%;top: 20%; scale: 1;" class="net">
     </div>
   </div>
 </template>
 <script setup lang="ts">
-
-const test = ()=>{
+import { ref, onMounted } from 'vue';
+let isshow = ref(false);
+onMounted(() => {
+  isshow.value = true;
+})
+const test = () => {
   alert('ok');
 }
 </script>
@@ -47,6 +54,7 @@ header {
 }
 
 .main-content {
+  user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -55,6 +63,7 @@ header {
   width: 100%;
   background-color: #faf9ff;
   position: relative;
+  overflow: hidden;
 }
 
 .header-left {
@@ -63,9 +72,45 @@ header {
   align-items: center;
 }
 
-.title{
+.title {
   position: absolute;
   top: 30%;
   left: 4em;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.5s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.net {
+  animation-name: scaleDraw;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-duration: 5s;
+}
+
+
+@keyframes scaleDraw {
+
+  0% {
+    transform: scale(0.95);
+  }
+  50%{
+    transform: scale(1);
+  }
+  
+  100% {
+    transform: scale(0.95);
+  }
 }
 </style>
