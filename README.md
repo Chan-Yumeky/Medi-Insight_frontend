@@ -1,6 +1,22 @@
 # Medi-Insight
 
-This template should help get you started developing with Vue 3 in Vite.
+配色方案（浅）
+#ffffff (白色)
+#e3e4f9 (浅蓝紫色)
+#faf9ff (淡紫白色)
+#f9f8fe (淡紫色)
+#e2e3f9 (蓝紫色)
+#f8f7fe (淡紫白色)
+#fefefe (近白色)
+#f0effd (非常浅的蓝紫色)
+#fefeff (接近白色)
+#ebeafc (淡蓝紫色)
+
+## Configuration
+vue-router
+element-plus
+three
+
 
 ## Recommended IDE Setup
 
