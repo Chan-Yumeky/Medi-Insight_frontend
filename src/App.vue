@@ -9,6 +9,5 @@
 <style scoped>
 .wrapper{
   height: 100vh;
-  width: 100vw;
 }
 </style>
