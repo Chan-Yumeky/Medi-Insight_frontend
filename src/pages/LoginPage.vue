@@ -6,12 +6,31 @@
         <h3 style="font-size:1em;">Medi-Insight</h3>
       </div>
       <div class="header-right">
-        <el-button type="default" style="width: 4em;" @click="test()">
-          Sign in
+        <el-button type="default" style="width: 4em;" @click="showLoginDialog = true">
+          登录
         </el-button>
         <el-button type="primary" style="width: 4em; margin-right: 2em;">
-          Sign up
+          注册
         </el-button>
+        <el-dialog v-model="showLoginDialog" width="22em"
+          style="display: flex;justify-content: center;align-items: center;flex-direction: column;">
+          <div
+            style="height: 5em;width: 100%; text-align: center; display: flex; align-items: center; justify-content: center;">
+            <h1 style="color: black;">登录</h1>
+          </div>
+          <br>
+          <el-form>
+            <el-input placeholder="username" v-model="username" style="margin-bottom: 1em;"/>
+            <el-input placeholder="password" type="password" v-model="pwd" style="margin-bottom: 1em;"/>
+          </el-form>
+          <div style="display: flex;align-items: center;justify-content: space-between; padding: 0 1em;">
+            <el-checkbox>记住密码</el-checkbox>
+            <a href="">忘记密码</a>
+          </div>
+          <el-button type="primary" @click="showLoginDialog = false" style="width: 100%;margin-top: 5em;">
+            Confirm
+          </el-button>
+        </el-dialog>
       </div>
     </header>
     <div class="main-content">
@@ -30,12 +49,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 let isshow = ref(false);
+let showLoginDialog = ref(false);
+let username = ref('');
+let pwd = ref('');
 onMounted(() => {
   isshow.value = true;
 })
-const test = () => {
-  alert('ok');
-}
 </script>
 
 <style scoped>
@@ -105,10 +124,11 @@ header {
   0% {
     transform: scale(0.95);
   }
-  50%{
+
+  50% {
     transform: scale(1);
   }
-  
+
   100% {
     transform: scale(0.95);
   }
