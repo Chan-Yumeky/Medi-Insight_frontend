@@ -6,7 +6,7 @@
         <h3 style="font-size:1em;">Medi-Insight</h3>
       </div>
       <div class="header-right">
-        <el-button type="default" style="width: 4em;" @click="loginFormShow">
+        <el-button type="default" style="width: 4em;" @click="test()">
           Sign in
         </el-button>
         <el-button type="primary" style="width: 4em; margin-right: 2em;">
@@ -19,24 +19,28 @@
         <h1 style="font-size: 2.8em;">Medi-Insight</h1>
         <p style="font-size: 1.3em;">AI赋能，医疗预测系统</p>
       </div>
-      <img src="../assets/Medi-Insight.svg" alt="" style="width: 100%;">
+      <div></div>
+      <img src="../assets/Medi-Insight.png" alt="" style="height: 100%;">
     </div>
   </div>
 </template>
 <script setup lang="ts">
+
+const test = ()=>{
+  alert('ok');
+}
 </script>
 
 <style scoped>
-.wrapper {
-  height: 100vh;
-  overflow-y: hidden;
-}
-
 header {
   height: 3.2em;
   width: 100%;
+  z-index: 100;
   background-color: #faf9ff;
   display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e3e4f9;
@@ -48,6 +52,7 @@ header {
   align-items: center;
   flex-direction: row;
   height: 100%;
+  width: 100%;
   background-color: #faf9ff;
   position: relative;
 }
@@ -60,7 +65,7 @@ header {
 
 .title{
   position: absolute;
-  top: 25%;
+  top: 30%;
   left: 4em;
 }
 </style>
