@@ -27,7 +27,7 @@
             <el-checkbox>记住密码</el-checkbox>
             <a href="">忘记密码</a>
           </div>
-          <el-button type="primary" @click="showLoginDialog = false" style="width: 100%;margin-top: 5em;">
+          <el-button type="primary" @click="checkAvailable()" style="width: 100%;margin-top: 5em;">
             Confirm
           </el-button>
         </el-dialog>
@@ -48,13 +48,21 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 let isshow = ref(false);
 let showLoginDialog = ref(false);
 let username = ref('');
 let pwd = ref('');
+let router = useRouter()
 onMounted(() => {
   isshow.value = true;
 })
+const checkAvailable = ()=>{
+  showLoginDialog.value = false
+  router.push({
+    name:'home'
+  })
+}
 </script>
 
 <style scoped>
