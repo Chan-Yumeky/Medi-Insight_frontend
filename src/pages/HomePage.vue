@@ -14,41 +14,42 @@
         </header>
         <div class="main-content">
             <RouterView></RouterView>
-            <el-menu default-active="1" class="sidebar" :collapse="isCollapse">
-                <el-menu-item index="1">
-                    <el-icon><icon-menu /></el-icon>
-                    <template #title>Navigator Two</template>
-                </el-menu-item>
-                <el-menu-item index="2">
-                    <el-icon><icon-menu /></el-icon>
-                    <template #title>Navigator Two</template>
-                </el-menu-item>
-                <el-menu-item index="3">
-                    <el-icon>
-                        <document />
-                    </el-icon>
-                    <template #title>Navigator Three</template>
-                </el-menu-item>
-                <el-menu-item index="4">
-                    <el-icon>
-                        <setting />
-                    </el-icon>
-                    <template #title>Navigator Four</template>
-                </el-menu-item>
-            </el-menu>
         </div>
+        <el-collapse-transition>
+            <div v-show="isCollapse" class="sidebar">
+                <div class="transition-box">
+                    <!-- TODO:account functions -->
+                    <el-menu>
+                        <el-menu-item>
+                            h1
+                        </el-menu-item>
+                        <el-menu-item>
+                            h2
+                        </el-menu-item>
+                        <el-menu-item>
+                            h3
+                        </el-menu-item>
+                        <el-menu-item>
+                            h4
+                        </el-menu-item>
+                    </el-menu>
+                </div>
+            </div>
+        </el-collapse-transition>
     </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
-let isCollapse = ref(true);
+let isCollapse = ref(false);
 
 </script>
 
 <style scoped>
 .wrapper {
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
 }
 
 header {
@@ -66,7 +67,8 @@ header {
 }
 
 .main-content {
-    margin-top: 3.2em;
+    box-sizing: border-box;
+    padding-top: 3.2em;
     user-select: none;
     display: flex;
     justify-content: space-between;
@@ -76,7 +78,6 @@ header {
     width: 100%;
     background-color: #faf9ff;
     position: relative;
-    margin-bottom: -3.2em;
 }
 
 .header-left {
@@ -103,24 +104,21 @@ header {
 .sidebar {
     position: absolute;
     right: 0;
-    top: 0;
+    top: 3.2em;
     width: 0em;
-    height: 100%;
 }
 
 .transition-box {
     width: 100%;
     height: 100%;
-    border-radius: 4px;
-    background-color: #409eff;
     text-align: center;
+    background-color: #e2e3f9;
     color: #fff;
-    padding: 40px 20px;
+    box-shadow: 1px 1px 8px #e2e3f9;
     box-sizing: border-box;
-    margin-right: 20px;
 }
 
 .sidebar:not(.el-menu--collapse) {
-  width: 16em;
+    width: 16em;
 }
 </style>
