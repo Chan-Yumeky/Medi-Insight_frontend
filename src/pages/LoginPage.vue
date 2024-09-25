@@ -47,6 +47,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 let isshow = ref(false);
@@ -57,7 +59,21 @@ let router = useRouter()
 onMounted(() => {
   isshow.value = true;
 })
-const checkAvailable = ()=>{
+const checkAvailable = async()=>{
+  // await axios.get('localhost:8080/login/'+username.value+'/'+pwd.value).then((resp)=>{
+  //   if(resp.data.code==500){
+  //     ElMessage({
+  //       message: 'Login failed',
+  //       type: 'error',
+  //     })
+  //   }else if(resp.data.code==200){
+  //     ElMessage({
+  //       message: 'Login success',
+  //       type: 'success',
+  //     })
+  //   }
+  //   console.log(resp.data)
+  // })
   showLoginDialog.value = false
   router.push({
     name:'home'
@@ -66,6 +82,11 @@ const checkAvailable = ()=>{
 </script>
 
 <style scoped>
+.wrapper{
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
 header {
   height: 3.2em;
   width: 100%;
