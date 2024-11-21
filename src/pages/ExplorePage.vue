@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" style="width: 100%;">
         <div class="container">
             <Transition name="slide-fade">
                 <div v-if="isshow">
@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </Transition>
-            <div style="width: 30em;height: calc(100vh-3.2vw);overflow-y: scroll;">
+            <div style="width: 30em;overflow-y: scroll;">
                 <div style="height: 100em;width: 100%;">
                     doomy
                 </div>
@@ -155,4 +155,5 @@ p {
     transform: translateX(20px);
     opacity: 0;
 }
+
 </style>

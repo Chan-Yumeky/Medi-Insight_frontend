@@ -12,8 +12,10 @@
                 </div>
             </div>
         </header>
-        <div class="main-content">
-            <RouterView></RouterView>
+        <div class="container" style="display:flex; flex-direction: row; height: 100%">
+            <div class="main-content">
+                <RouterView></RouterView>
+            </div>
         </div>
         <el-collapse-transition>
             <div v-show="isCollapse" class="sidebar">

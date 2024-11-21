@@ -2,6 +2,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import LoginPage from "@/pages/LoginPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 import ExplorePage from "@/pages/ExplorePage.vue";
+import AttendancePage from "@/pages/AttendancePage.vue";
+import ProcessPage from "@/pages/ProcessPage.vue";
+import MainPage from "@/pages/MainPage.vue";
 const router = createRouter({
     history: createWebHashHistory(),
     routes:[
@@ -18,15 +21,34 @@ const router = createRouter({
             name:'home',
             path:'/home',
             component:HomePage,
-            redirect:'/home/explore',
+            redirect:'/home/hub',
             children:[
                 {
-                    name:'explore',
-                    path:'explore',
-                    component:ExplorePage
+                    name:'main',
+                    path:'hub',
+                    component:MainPage,
+                    redirect:'/home/hub/explore',
+                    children:[
+                        {
+                            name:'explore',
+                            path:'explore',
+                            component:ExplorePage
+                        },
+                        {
+                            name:'attendance',
+                            path:'attendance',
+                            component:AttendancePage
+                        },
+                    ]
+                },
+                {
+                    path: '/process/:sid',
+                    name: 'process',
+                    component: ProcessPage,
+                    props: route => ({ sid: route.params.sid})
                 }
             ]
-        },
+        }
     ]
 })
 

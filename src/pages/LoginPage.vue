@@ -47,8 +47,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import axios from 'axios';
-import { ElMessage } from 'element-plus';
+// import axios from 'axios';
+// import { ElMessage } from 'element-plus';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 let isshow = ref(false);
