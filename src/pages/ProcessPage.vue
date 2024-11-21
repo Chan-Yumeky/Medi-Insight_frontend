@@ -10,33 +10,32 @@
                 next
             </el-button>
         </header>
-        <el-tabs v-model="activeName" type="card" class="tabs">
-            <el-tab-pane name="1">
-                User
-            </el-tab-pane>
-            <el-tab-pane name="2">Config</el-tab-pane>
-            <el-tab-pane name="3">Role</el-tab-pane>
-            <el-tab-pane name="4">Task</el-tab-pane>
-        </el-tabs>
+        <div>
+            <div v-if="active==0">
+                <BasicInfo :sid="props.sid"></BasicInfo>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
 const props = defineProps({
     sid: { type: String, required: true },
 });
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
+import BasicInfo from '@/components/ProcessInfo/BasicInfo.vue';
 const activeName = ref('1')
 
 const active = ref(0)
 
 const next = () => {
     if (active.value++ > 2) active.value = 3
-    activeName.value = (active.value+1).toString()
+    activeName.value = (active.value + 1).toString()
 }
 </script>
 <style lang="css" scoped>
 header {
     width: 100%;
+    height: 2em;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -45,8 +44,5 @@ header {
 .mb-4 {
     padding: 0.5em 0em;
     scale: 0.8;
-}
-:deep(.el-tabs__header) {
-  display: none; /* 隐藏表头 */
 }
 </style>

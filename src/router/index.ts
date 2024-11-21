@@ -45,7 +45,7 @@ const router = createRouter({
                     path: '/process/:sid',
                     name: 'process',
                     component: ProcessPage,
-                    props: route => ({ sid: route.params.sid})
+                    props: route => ({ sid: route.params.sid}),
                 }
             ]
         }
