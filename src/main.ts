@@ -1,5 +1,5 @@
 import './assets/main.css'
-import Editor from './components/Editor.vue'
+import EditorComp from './components/EditorComp.vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
@@ -8,6 +8,6 @@ import router from './router'
 const app = createApp(App)
 app.use(ElementPlus)
 app.use(router)
-app.use(Editor)
+app.use(EditorComp)
 app.mount('#app')
 
