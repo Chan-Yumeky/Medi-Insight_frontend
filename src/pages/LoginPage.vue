@@ -12,15 +12,14 @@
             width="33em"
             style="background-color: whitesmoke"
         >
-          <div
-              style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+          <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
             <h1 style="color: black; font-size: 2em">登录</h1>
             <div style="font-size: 1em; color: #868484; margin-top: 10px">在进入系统之前，请先输入用户名和密码进行登录</div>
           </div>
           <div class="input-wrapper">
-            <el-form>
+            <el-form :model="form" :rules="rules" ref="formRef">
               <el-form-item prop="username">
-                <el-input maxlength="30" type="text" placeholder="用户名/邮箱">
+                <el-input v-model="form.username" maxlength="30" type="text" placeholder="用户名/邮箱">
                   <template #prefix>
                     <el-icon>
                       <User/>
@@ -29,7 +28,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="password">
-                <el-input type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
+                <el-input v-model="form.password" type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
                   <template #prefix>
                     <el-icon>
                       <Lock/>
@@ -50,7 +49,7 @@
             </el-form>
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
               <div style="margin-top: 1vw">
-                <el-button style="width: 22vw" type="success" plain @click="changeToHome">立即登录</el-button>
+                <el-button style="width: 22vw" type="success" plain @click="userLogin()">立即登录</el-button>
               </div>
               <el-divider>
                 <span style="color: grey; font-size: 0.9em;">没有账号</span>
@@ -243,11 +242,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { computed } from "vue";
 import {EditPen, Lock, Message, User} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
+import {login} from "@/net/index.js";
 
 let isshow = ref(false);
 let showLoginDialog = ref(false);
@@ -257,6 +257,31 @@ let router = useRouter()
 onMounted(() => {
   isshow.value = true;
 })
+
+const formRef = ref()
+const form = reactive({
+  username: '',
+  password: '',
+  remember: false,
+})
+
+const rules = {
+  username: [
+    {required: true, message: '请输入用户名'}
+  ],
+  password: [
+    {required: true, message: '请输入密码'}
+  ]
+}
+
+const userLogin = ()=> {
+    formRef.value.validate((isValid) => {
+    if (isValid) {
+      login(form.username, form.password, form.remember, () => {
+      })
+    }
+  });
+}
 
 const loginVisible = ref(false)
 const registerVisible = ref(false)
@@ -288,13 +313,6 @@ const doReset = ()=> {
   resetVisible.value = false
   loginVisible.value = true
   ElMessage.success('密码重置成功，请重新登录')
-}
-
-const changeToHome = ()=> {
-  router.push({
-    name: 'home'
-  })
-  ElMessage.success('登录成功，欢迎回来~')
 }
 </script>
 
