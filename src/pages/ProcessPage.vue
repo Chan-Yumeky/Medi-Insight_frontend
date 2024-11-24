@@ -13,7 +13,7 @@
         </header>
         <div>
             <div v-if="active==0">
-                <BasicInfo :sid="props.sid"></BasicInfo>
+                <OutpatientMedicalRecords :sid="props.sid"></OutpatientMedicalRecords>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@ const props = defineProps({
     sid: { type: String, required: true },
 });
 import { ref } from 'vue';
-import BasicInfo from '@/components/ProcessInfo/BasicInfo.vue';
+import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedicalRecords.vue';
 const activeName = ref('1')
 
 const active = ref(0)

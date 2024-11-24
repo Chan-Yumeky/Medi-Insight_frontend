@@ -3,18 +3,21 @@
         <el-container style="height: 100%">
             <el-aside style="height: 100%; width: 10%;">
                 <el-menu v-model="activeName" style="width: 100%; height: 100%;">
-                    <el-menu-item @click="activeName='0'">基本信息</el-menu-item>
-                    <el-menu-item @click="activeName='1'">过往病史</el-menu-item>
-                    <el-menu-item @click="activeName='2'">诊断录入</el-menu-item>
-                    <el-menu-item @click="activeName='3'">病历录入</el-menu-item>
+                    <el-menu-item @click="activeName = '0'">基本信息</el-menu-item>
+                    <el-menu-item @click="activeName = '1'">过往病史</el-menu-item>
+                    <el-menu-item @click="activeName = '2'">诊断录入</el-menu-item>
+                    <el-menu-item @click="activeName = '3'">病历录入</el-menu-item>
                 </el-menu>
             </el-aside>
             <el-container>
                 <el-main style="padding: 0;" class="wrapper">
+                    <div v-if="activeName == '0'">
+                        <BasicInfo></BasicInfo>
+                    </div>
                     <div v-if="activeName == '1'">
                         <Suspense>
                             <template #default>
-                                <AsyncModelViewer/>
+                                <AsyncModelViewer />
                             </template>
                             <template #fallback>
                                 <div>加载中...</div>
@@ -22,10 +25,10 @@
                         </Suspense>
                         <HeartModel></HeartModel>
                     </div>
-                    <div v-if="activeName=='2'">
+                    <div v-if="activeName == '2'">
                         <PrescriptionComp></PrescriptionComp>
                     </div>
-                    <div v-else>
+                    <div v-if="activeName=='3'">
                         <el-row>
                             <el-col :span="16">
                                 <EditorComp @load="onLoad" style="margin: 10px 0;"></EditorComp>
@@ -98,11 +101,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent,ref } from 'vue';
-import EditorComp from '../EditorComp.vue';
-import PrescriptionComp from '../PrescriptionComp.vue';
+import { defineAsyncComponent, ref } from 'vue';
+import EditorComp from '../Outpatient/EditorComp.vue';
+import PrescriptionComp from '../Outpatient/PrescriptionComp.vue';
+import BasicInfo from '../Outpatient/BasicInfo.vue';
 const AsyncModelViewer = defineAsyncComponent(() =>
-    import('@/components/HeartModel.vue')
+    import('@/components/Outpatient/HeartModel.vue')
 );
 defineProps({
     sid: { type: String, required: true },

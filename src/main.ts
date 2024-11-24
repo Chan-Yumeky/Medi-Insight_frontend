@@ -1,5 +1,5 @@
 import './assets/main.css'
-import EditorComp from './components/EditorComp.vue'
+import EditorComp from './components/Outpatient/EditorComp.vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
