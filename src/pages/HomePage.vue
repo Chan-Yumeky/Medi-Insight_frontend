@@ -35,6 +35,7 @@
                             h4
                         </el-menu-item>
                     </el-menu>
+                    <el-button @click="userLogout()">退出登录</el-button>
                 </div>
             </div>
         </el-collapse-transition>
@@ -43,8 +44,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
+import router from "@/router/index.ts";
+import {logout} from "@/net/index.js";
+
 let isCollapse = ref(false);
 
+const userLogout = ()=> {
+  logout(() => router.push('/login'))
+}
 </script>
 
 <style scoped>
