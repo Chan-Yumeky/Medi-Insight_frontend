@@ -29,6 +29,8 @@ element-plus
 
 three
 
+axios
+
 
 ## Recommended IDE Setup
 
