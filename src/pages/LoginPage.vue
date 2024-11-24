@@ -78,9 +78,9 @@
                 <div style="font-size: 1em; color: #868484; margin-top: 10px">请输入需要重置密码的电子邮件地址</div>
               </div>
               <div style="margin-top: 1.5vw">
-                <el-form>
+                <el-form :model="reset_form" :rules="reset_rules" ref="reset_formRef">
                   <el-form-item prop="email">
-                    <el-input type="email" placeholder="电子邮件地址">
+                    <el-input v-model="reset_form.email" type="email" placeholder="电子邮件地址">
                       <template #prefix>
                         <el-icon>
                           <Message/>
@@ -91,7 +91,7 @@
                   <el-form-item prop="code">
                     <el-row :gutter="10" style="width: 100%">
                       <el-col :span="18">
-                        <el-input maxlength="6" type="text" placeholder="请输入验证码">
+                        <el-input v-model="reset_form.code" :maxlength="6" type="text" placeholder="请输入验证码">
                           <template #prefix>
                             <el-icon>
                               <EditPen/>
@@ -100,8 +100,8 @@
                         </el-input>
                       </el-col>
                       <el-col :span="5">
-                        <el-button type="success">
-                          获取验证码
+                        <el-button @click="reset_askCode" :disabled="!reset_isEmailValid || reset_coldTime > 0" type="success">
+                          {{ reset_coldTime > 0 ? `请稍后 ${reset_coldTime} 秒` : '获取验证码' }}
                         </el-button>
                       </el-col>
                     </el-row>
@@ -118,9 +118,9 @@
                 <div style="font-size: 1em; color: #868484; margin-top: 10px">请填写你的新密码，并牢记防止丢失</div>
               </div>
               <div style="margin-top: 1.5vw">
-                <el-form>
+                <el-form :model="reset_form" :rules="reset_rules" ref="reset_formRef">
                   <el-form-item prop="password">
-                    <el-input maxlength="20" type="password" placeholder="密码">
+                    <el-input v-model="reset_form.password" maxlength="20" type="password" placeholder="密码">
                       <template #prefix>
                         <el-icon>
                           <Lock/>
@@ -129,7 +129,7 @@
                     </el-input>
                   </el-form-item>
                   <el-form-item prop="password_repeat">
-                    <el-input maxlength="20" type="password" placeholder="重复密码">
+                    <el-input v-model="reset_form.password_repeat" maxlength="20" type="password" placeholder="重复密码">
                       <template #prefix>
                         <el-icon>
                           <Lock/>
@@ -258,6 +258,7 @@ onMounted(() => {
   isshow.value = true;
 })
 
+// ==============登录==================
 const formRef = ref()
 const login_form = reactive({
   username: '',
@@ -284,6 +285,7 @@ const userLogin = ()=> {
   });
 }
 
+// ==============注册==================
 const register_formRef = ref()
 const coldTime = ref(0)
 
@@ -372,14 +374,92 @@ const register =() => {
   })
 }
 
+// ==============重置密码==================
+const reset_form = reactive({
+  email: '',
+  code: '',
+  password: '',
+  password_repeat: ''
+})
+
+const reset_formRef = ref()
+const reset_coldTime = ref(0)
+const active = ref(0)
+const reset_isEmailValid = computed(() => /^[\w.-]+@[\w.-]+\.\w+$/.test(reset_form.email))
+
+const reset_validatePassword = (rules, value, callback) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== reset_form.password) {
+    callback(new Error("两次输入的密码不一致"))
+  } else {
+    callback()
+  }
+}
+
+const reset_rules = {
+  email: [
+    {required: true, message: '请输入邮件地址', trigger: 'blur'},
+    {type: 'email', message: '请输入合法的电子邮件地址', trigger: ['blur', 'change']}
+  ],
+  code: [
+    {required: true, message: '请输入获取的验证码', trigger: 'blur'},
+  ],
+  password: [
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 20, message: '密码的长度必须在6-20个字符之间', trigger: ['blur']}
+  ],
+  password_repeat: [
+    {validator: reset_validatePassword, trigger: ['blur', 'change']},
+  ],
+}
+
+const reset_askCode =() => {
+  if (reset_isEmailValid) {
+    reset_coldTime.value = 60
+    get(`/auth/ask-code?email=${reset_form.email}&type=reset`, () => {
+      ElMessage.success(`验证码已发送到邮箱: ${reset_form.email}，请注意查收`)
+      const handle = setInterval(() => {
+        reset_coldTime.value--
+        if (reset_coldTime.value === 0) {
+          clearInterval(handle)
+        }
+      }, 1000)
+    }, (message) => {
+      ElMessage.warning(message)
+      reset_coldTime.value = 0
+    })
+  } else {
+    ElMessage.warning("请输入正确的电子邮件！")
+  }
+}
+
+const confirmReset =() => {
+  reset_formRef.value.validate((isValid) => {
+    if (isValid) {
+      post('/auth/reset-confirm', {
+        email: reset_form.email,
+        code: reset_form.code
+      }, () => active.value++)
+    }
+  })
+}
+
+const doReset =() => {
+  reset_formRef.value.validate((isValid) => {
+    if (isValid) {
+      post('/auth/reset-password', {...reset_form}, () => {
+        ElMessage.success('密码重置成功，请重新登录')
+        registerVisible.value = false
+        loginVisible.value = true
+      })
+    }
+  })
+}
+
 const loginVisible = ref(false)
 const registerVisible = ref(false)
 const resetVisible = ref(false)
-const changeToLogin = ()=> {
-  registerVisible.value = false
-  loginVisible.value = true
-  ElMessage.success('注册成功，请登录进入系统')
-}
 const changeToLogin2 = ()=> {
   registerVisible.value = false
   loginVisible.value = true
@@ -393,16 +473,15 @@ const changeToReset = ()=> {
   resetVisible.value = true
 }
 
-const active = ref(0)
-const confirmReset = ()=> {
-  active.value++
-}
-const doReset = ()=> {
-  active.value--
-  resetVisible.value = false
-  loginVisible.value = true
-  ElMessage.success('密码重置成功，请重新登录')
-}
+// const confirmReset = ()=> {
+//   active.value++
+// }
+// const doReset = ()=> {
+//   active.value--
+//   resetVisible.value = false
+//   loginVisible.value = true
+//   ElMessage.success('密码重置成功，请重新登录')
+// }
 </script>
 
 <style scoped>
