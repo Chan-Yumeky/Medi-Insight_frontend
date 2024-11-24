@@ -17,9 +17,9 @@
             <div style="font-size: 1em; color: #868484; margin-top: 10px">在进入系统之前，请先输入用户名和密码进行登录</div>
           </div>
           <div class="input-wrapper">
-            <el-form :model="form" :rules="rules" ref="formRef">
+            <el-form :model="login_form" :rules="login_rules" ref="formRef">
               <el-form-item prop="username">
-                <el-input v-model="form.username" maxlength="30" type="text" placeholder="用户名/邮箱">
+                <el-input v-model="login_form.username" maxlength="30" type="text" placeholder="用户名/邮箱">
                   <template #prefix>
                     <el-icon>
                       <User/>
@@ -28,7 +28,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="password">
-                <el-input v-model="form.password" type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
+                <el-input v-model="login_form.password" type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
                   <template #prefix>
                     <el-icon>
                       <Lock/>
@@ -155,12 +155,12 @@
           <div
               style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
             <h1 style="color: black; font-size: 2em">注册</h1>
-            <div style="font-size: 1em; color: #868484; margin-top: 10px">欢迎注册我们的学习平台，请在下方填写相关信息</div>
+            <div style="font-size: 1em; color: #868484; margin-top: 10px">欢迎注册Medi-Insight网站，请在下方填写相关信息</div>
           </div>
           <div class="input-wrapper">
-            <el-form>
+            <el-form :model="register_form" :rules="register_rules" ref="register_formRef">
               <el-form-item prop="username">
-                <el-input maxlength="30" type="text" placeholder="用户名/邮箱">
+                <el-input v-model="register_form.username" maxlength="30" type="text" placeholder="用户名/邮箱">
                   <template #prefix>
                     <el-icon>
                       <User/>
@@ -169,7 +169,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="password">
-                <el-input type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
+                <el-input v-model="register_form.password" type="password" maxlength="20" style="margin-top: 5px" placeholder="密码">
                   <template #prefix>
                     <el-icon>
                       <Lock/>
@@ -178,7 +178,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="password_repeat">
-                <el-input type="password" maxlength="20" style="margin-top: 5px" placeholder="重复密码">
+                <el-input v-model="register_form.password_repeat" type="password" maxlength="20" style="margin-top: 5px" placeholder="重复密码">
                   <template #prefix>
                     <el-icon>
                       <Lock/>
@@ -187,7 +187,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="email">
-                <el-input type="email" placeholder="电子邮件地址">
+                <el-input v-model="register_form.email" type="email" placeholder="电子邮件地址">
                   <template #prefix>
                     <el-icon>
                       <Message/>
@@ -198,7 +198,7 @@
               <el-form-item prop="code">
                 <el-row :gutter="10" style="width: 100%;">
                   <el-col :span="18">
-                    <el-input maxlength="6" type="text" placeholder="请输入验证码">
+                    <el-input v-model="register_form.code" :maxlength="6" type="text" placeholder="请输入验证码">
                       <template #prefix>
                         <el-icon>
                           <EditPen/>
@@ -207,8 +207,8 @@
                     </el-input>
                   </el-col>
                   <el-col :span="5">
-                    <el-button type="success">
-                      获取验证码
+                    <el-button @click="askCode" :disabled="!isEmailValid || coldTime" type="success">
+                      {{ coldTime > 0 ? `请稍后 ${coldTime} 秒` : '获取验证码' }}
                     </el-button>
                   </el-col>
                 </el-row>
@@ -216,7 +216,7 @@
             </el-form>
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
               <div style="margin-top: 1vw">
-                <el-button style="width: 22vw" type="warning" plain @click="changeToLogin">立即注册</el-button>
+                <el-button style="width: 22vw" type="warning" plain @click="register">立即注册</el-button>
               </div>
               <div style="margin: 1vw 0">
                 <span style="font-size: 1em; line-height: 15px; color: grey">已有账号?&nbsp;&nbsp;&nbsp;</span>
@@ -247,7 +247,7 @@ import { useRouter } from 'vue-router';
 import { computed } from "vue";
 import {EditPen, Lock, Message, User} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
-import {login} from "@/net/index.js";
+import {login, get, post} from "@/net/index.js";
 
 let isshow = ref(false);
 let showLoginDialog = ref(false);
@@ -259,13 +259,13 @@ onMounted(() => {
 })
 
 const formRef = ref()
-const form = reactive({
+const login_form = reactive({
   username: '',
   password: '',
   remember: false,
 })
 
-const rules = {
+const login_rules = {
   username: [
     {required: true, message: '请输入用户名'}
   ],
@@ -277,11 +277,99 @@ const rules = {
 const userLogin = ()=> {
     formRef.value.validate((isValid) => {
     if (isValid) {
-      login(form.username, form.password, form.remember, () => {
+      login(login_form.username, login_form.password, login_form.remember, () => {
         router.push('/home')
       })
     }
   });
+}
+
+const register_formRef = ref()
+const coldTime = ref(0)
+
+const register_form = reactive({
+  username: '',
+  password: '',
+  password_repeat: '',
+  email: '',
+  code: ''
+})
+
+const validateUsername = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入用户名'))
+  } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
+    callback(new Error('用户名不能包含特殊字符，只能是中文/英文'))
+  } else {
+    callback()
+  }
+}
+
+const validatePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== register_form.password) {
+    callback(new Error("两次输入的密码不一致"))
+  } else {
+    callback()
+  }
+}
+
+const register_rules = {
+  username: [
+    {validator: validateUsername, trigger: ['blur', 'change']},
+    {min: 1, max: 30, message: '用户名的长度必须在1-30个字符之间', trigger: ['blur', 'change']},
+  ],
+  password: [
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 20, message: '密码的长度必须在6-20个字符之间', trigger: ['blur', 'change']}
+  ],
+  password_repeat: [
+    {validator: validatePassword, trigger: ['blur', 'change']},
+  ],
+  email: [
+    {required: true, message: '请输入邮件地址', trigger: 'blur'},
+    {type: 'email', message: '请输入合法的电子邮件地址', trigger: ['blur', 'change']}
+  ],
+  code: [
+    {required: true, message: '请输入获取的验证码', trigger: 'blur'},
+  ]
+}
+
+const askCode =() => {
+  if (isEmailValid) {
+    coldTime.value = 60
+    get(`/auth/ask-code?email=${register_form.email}&type=register`, () => {
+      ElMessage.success(`验证码已发送到邮箱: ${register_form.email}，请注意查收`)
+      const handle = setInterval(() => {
+        coldTime.value--
+        if (coldTime.value === 0) {
+          clearInterval(handle)
+        }
+      }, 1000)
+    }, (message) => {
+      ElMessage.warning(message)
+      coldTime.value = 0
+    })
+  } else {
+    ElMessage.warning("请输入正确的电子邮件！")
+  }
+}
+
+const isEmailValid = computed(() => /^[\w.-]+@[\w.-]+\.\w+$/.test(register_form.email))
+
+const register =() => {
+  register_formRef.value.validate((isValid) => {
+    if (isValid) {
+      post('/auth/register', {...register_form}, () => {
+        ElMessage('注册成功，欢迎加入我们')
+        registerVisible.value = false
+        loginVisible.value = true
+      })
+    } else {
+      ElMessage.warning('请完整填写注册表单内容')
+    }
+  })
 }
 
 const loginVisible = ref(false)
