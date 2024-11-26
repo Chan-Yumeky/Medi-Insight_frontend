@@ -20,22 +20,11 @@
         <el-collapse-transition>
             <div v-show="isCollapse" class="sidebar">
                 <div class="transition-box">
-                    <!-- TODO:account functions -->
                     <el-menu>
-                        <el-menu-item>
-                            h1
-                        </el-menu-item>
-                        <el-menu-item>
-                            h2
-                        </el-menu-item>
-                        <el-menu-item>
-                            h3
-                        </el-menu-item>
-                        <el-menu-item>
-                            h4
+                        <el-menu-item @click="userLogout">
+                            <span style="color: red">退出登录</span>
                         </el-menu-item>
                     </el-menu>
-                    <el-button @click="userLogout()">退出登录</el-button>
                 </div>
             </div>
         </el-collapse-transition>
@@ -52,6 +41,7 @@ let isCollapse = ref(false);
 const userLogout = ()=> {
   logout(() => router.push('/login'))
 }
+
 </script>
 
 <style scoped>
@@ -111,6 +101,7 @@ header {
 }
 
 .sidebar {
+    z-index: 1000;
     position: absolute;
     right: 0;
     top: 3.2em;

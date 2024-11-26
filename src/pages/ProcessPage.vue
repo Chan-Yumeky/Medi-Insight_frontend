@@ -15,6 +15,9 @@
             <div v-if="active == 0">
                 <OutpatientMedicalRecords :sid="props.sid" :pid="pid.toString()"></OutpatientMedicalRecords>
             </div>
+            <div v-if="active==1">
+                <DoctorAdvice></DoctorAdvice>
+            </div>
         </div>
     </div>
 </template>
@@ -24,6 +27,7 @@ const props = defineProps({
 });
 import { ref } from 'vue';
 import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedicalRecords.vue';
+import DoctorAdvice from '@/components/ProcessInfo/DoctorAdvice.vue';
 const activeName = ref('1')
 const pid = sessionStorage.getItem('cur_pid')
 
