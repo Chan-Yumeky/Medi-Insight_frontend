@@ -23,6 +23,7 @@
 #ebeafc (淡蓝紫色)
 
 ## Configuration
+
 vue-router
 
 element-plus
