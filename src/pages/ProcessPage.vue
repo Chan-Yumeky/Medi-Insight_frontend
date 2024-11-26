@@ -24,10 +24,8 @@ const props = defineProps({
 });
 import { ref } from 'vue';
 import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedicalRecords.vue';
-import { useLocalStore } from '@/store/local';
 const activeName = ref('1')
-const localStore = useLocalStore()
-const pid = localStore.cur_pid
+const pid = sessionStorage.getItem('cur_pid')
 
 const active = ref(0)
 

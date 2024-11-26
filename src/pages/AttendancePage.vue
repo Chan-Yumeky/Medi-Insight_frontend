@@ -1,5 +1,7 @@
 <template>
     <div class="wrapper">
+        <Transition name="slide-fade">
+            <div v-if="isshow">
         <header>
             <span style="margin-left: 1em; color: #555;font-weight: 700;">病人列表</span>
         </header>
@@ -25,24 +27,25 @@
             </el-table-column>
         </el-table>
     </div>
+        </Transition>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { useLocalStore } from '@/store/local';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-
+let isshow = ref(false);
 let patientList = ref()
 const router = useRouter()
-const localStore = useLocalStore()
 const handleClick = (sid: any, pid: any) => {
     console.log(sid, pid)
     router.push({ name: 'process', params: { sid: sid } });
-    localStore.cur_pid = pid
+    sessionStorage.setItem('cur_pid', pid)
 }
 
 onMounted(async () => {
+    isshow.value = true
     await getAllWaitingList()
 })
 

@@ -3,6 +3,11 @@
         <div class="container">
             <Transition name="slide-fade">
                 <div v-if="isshow">
+                    <el-carousel trigger="click" height="150px" arrow="never" indicator-position="inside">
+                        <el-carousel-item v-for="item in 4" :key="item">
+                            <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+                        </el-carousel-item>
+                    </el-carousel>
                     <div class="main-title">
                         <h1>Explore</h1>
                         <p>do what you want</p>
@@ -34,28 +39,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item-row">
-                        <div class="sub-title">
-                            <h3>U3</h3>
-                        </div>
-                        <div class="itemline">
-                            <div class="item">
-                            </div>
-                            <div class="item">
-                            </div>
-                            <div class="item">
-                            </div>
-                            <div class="item">
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </Transition>
-            <div style="width: 30em;overflow-y: scroll;">
-                <div style="height: 100em;width: 100%;">
-                    doomy
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -70,9 +55,10 @@ onMounted(() => {
 
 <style scoped>
 .container {
-    height: 100%;
+    height: calc(100vh - 3.2em);
     width: 100%;
     display: flex;
+    overflow-y: scroll;
     justify-content: space-between;
 }
 
@@ -141,19 +127,4 @@ p {
     scale: 1.1;
     transition: 0.2s;
 }
-
-.slide-fade-enter-active {
-    transition: all 0.5s ease-out;
-}
-
-.slide-fade-leave-active {
-    transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    transform: translateX(20px);
-    opacity: 0;
-}
-
 </style>

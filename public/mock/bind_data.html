@@ -17,42 +17,42 @@
 		<div style="text-align: left;" domain="" code="" title="" contenteditable="false"><span
 				style="font-size: small; text-align: justify; font-weight: bold;" domain="" code="" title=""
 				contenteditable="false">姓名：</span>
-			<field tabindex="0" id="pat_name" type="Text" contenteditable="false" class="input" title="姓名"
-				name="pat_name" data-code="" data-expression="" multiline="false" validate="false" format=""
+			<field tabindex="0" id="username" type="Text" contenteditable="false" class="input" title="姓名"
+				name="username" data-code="" data-expression="" multiline="false" validate="false" format=""
 				style="font-size: small; text-align: justify;" value="蔡志军"></field><span
 				style="font-size: small; text-align: justify;">&nbsp; &nbsp;</span><span
 				style="font-size: small; text-align: justify; font-weight: bold;" domain="" code="" title=""
 				contenteditable="false">性别：</span>
-			<field tabindex="0" id="pat_sex" type="Text" contenteditable="false" class="input" title="性别" value="男"
-				name="pat_sex" data-code="" data-expression="" multiline="false" validate="false" format=""
+			<field tabindex="0" id="gender" type="Text" contenteditable="false" class="input" title="性别" value="男"
+				name="gender" data-code="" data-expression="" multiline="false" validate="false" format=""
 				style="font-size: small; text-align: justify;"></field><span
 				style="font-size: small; text-align: justify;">&nbsp; &nbsp;</span><span
 				style="font-size: small; text-align: justify; font-weight: bold;" domain="" code="" title=""
 				contenteditable="false">年龄：</span>
-			<field tabindex="0" id="pat_age" type="Text" contenteditable="false" class="input" title="年龄" name="pat_age"
+			<field tabindex="0" id="age" type="Text" contenteditable="false" class="input" title="年龄" name="age"
 				data-code="" data-expression="" multiline="false" validate="false" format=""
 				style="font-size: small; text-align: justify;" value="45"></field><span
 				style="font-size: small; text-align: justify;">&nbsp; &nbsp;</span><span
 				style="font-size: small; text-align: justify; font-weight: bold;" domain="" code="" title=""
 				contenteditable="false">就诊科室：</span>
-			<field tabindex="0" id="visit_dept" type="Text" contenteditable="false" class="input" title="就诊科室"
-				name="visit_dept" data-code="" data-expression="" multiline="false" validate="false" format=""
+			<field tabindex="0" id="department" type="Text" contenteditable="false" class="input" title="就诊科室"
+				name="department" data-code="" data-expression="" multiline="false" validate="false" format=""
 				style="font-size: small; text-align: justify;" value="风湿免疫科"></field><span
 				style="font-size: small; text-align: justify; font-weight: bold;" domain="" code="" title=""
 				contenteditable="false">&nbsp; &nbsp;就诊号：</span>
 			<field tabindex="0" type="Text" contenteditable="false" class="input" title="就诊号" data-code=""
 				data-expression="" multiline="false" validate="false" format="" style="font-size: small;" domain=""
-				code="" required="false" inputmode="" id="pat_id" name="pat_id" value="MZ07882405098">
+				code="" required="false" inputmode="" id="id" name="id" value="MZ07882405098">
 				</field><span style="font-size: small; text-align: justify;">&nbsp;</span>
 		</div>
 		<div style="text-align: justify; line-height: 2;"><span style="line-height: 2;"><span
 					style="font-weight: 700; line-height: 2;">
 					<hr style="font-size: small;"><span style="font-size: 9pt;">就诊时间：</span>
 				</span>
-				<field tabindex="0" id="visit_time" type="Text" class="input" title="就诊时间" name="visit_time"
+				<field tabindex="0" id="startTime" type="Text" class="input" title="就诊时间" name="startTime"
 					data-code="" data-expression="" multiline="false" validate="false" format="" style="font-size: 9pt;"
 					value="2024-05-09 14:21:52"></field>
-				<field tabindex="0" type="Text" class="blank input" title="就诊时间" name="visit_time" data-code=""
+				<field tabindex="0" type="Text" class="blank input" title="就诊时间" name="startTime" data-code=""
 					data-expression="" multiline="false" validate="false" format=""
 					style="font-weight: 700; font-size: 9pt;">&nbsp;</field>
 			</span><span style="font-size: 9pt; line-height: 2;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -63,11 +63,11 @@
 			</span></div>
 		<div style="text-align: justify; line-height: 2;"><span style="font-size: 9pt; line-height: 2;"><span
 					style="font-weight: bold;">联系电话：</span>
-				<field tabindex="0" id="pat_phone" type="Text" class="input" title="联系电话" name="pat_phone" data-code=""
+				<field tabindex="0" id="phone" type="Text" class="input" title="联系电话" name="phone" data-code=""
 					data-expression="" multiline="false" validate="false" format="" contenteditable="true" style=""
 					value="13920631994"></field><span style="" domain="" code="" title=" "><span
 						style="font-weight: bold;">&nbsp; 家庭住址：</span>
-					<field tabindex="0" id="pat_address" name="pat_address" type="Text" contenteditable="true"
+					<field tabindex="0" id="address" name="address" type="Text" contenteditable="true"
 						class="blank input" title="地址" domain="" code="" multiline="true" required="false" format=""
 						inputmode="" data-expression="" value="上海市宝山区上大路99号">地址</field>
 				</span>
@@ -101,7 +101,7 @@
 			</span></div>
 		<div style="text-align: justify; line-height: 2;"><span style="font-size: 9pt; line-height: 2;"><span
 					style="font-weight: bold;">诊断：</span>
-				<field tabindex="0" id="diagnosis" name="diagnosis" type="Text" contenteditable="true" class="input"
+				<field tabindex="0" id="diagnostic" name="diagnostic" type="Text" contenteditable="true" class="input"
 					title="诊断" domain="" code="" multiline="true" required="false" format="" inputmode=""
 					data-expression="" style="" value="1、高血压 2、叶酸缺乏症 3、腰痛"></field>
 			</span></div>
@@ -124,8 +124,8 @@
 					style="font-weight: bold;"><br></span></span></div>
 		<div style="text-align: justify; line-height: 2;" domain="" code="" title="" contenteditable="false"><span
 				style="font-weight: bold; line-height: 2; font-size: 9pt;">医师签字：</span>
-			<field tabindex="0" id="doctor_name" type="Text" contenteditable="false" class="input" title="医师签字"
-				name="doctor_name" data-code="" data-expression="" multiline="false" validate="false" format=""
+			<field tabindex="0" id="doctorName" type="Text" contenteditable="false" class="input" title="医师签字"
+				name="doctorName" data-code="" data-expression="" multiline="false" validate="false" format=""
 				style="line-height: 2; font-size: 9pt;" domain="" code="" required="false" inputmode="" value="贾连荣">
 				</field><span style="line-height: 2; font-size: 9pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 				&nbsp; <span style="font-weight: bold; line-height: 2;">手签：</span></span>
