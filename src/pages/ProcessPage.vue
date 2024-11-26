@@ -12,8 +12,8 @@
             </el-button>
         </header>
         <div>
-            <div v-if="active==0">
-                <OutpatientMedicalRecords :sid="props.sid"></OutpatientMedicalRecords>
+            <div v-if="active == 0">
+                <OutpatientMedicalRecords :sid="props.sid" :pid="pid.toString()"></OutpatientMedicalRecords>
             </div>
         </div>
     </div>
@@ -24,7 +24,10 @@ const props = defineProps({
 });
 import { ref } from 'vue';
 import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedicalRecords.vue';
+import { useLocalStore } from '@/store/local';
 const activeName = ref('1')
+const localStore = useLocalStore()
+const pid = localStore.cur_pid
 
 const active = ref(0)
 
@@ -45,5 +48,7 @@ header {
 .mb-4 {
     padding: 0.5em 0em;
     scale: 0.8;
+    background-color:#faf9ff;
 }
+
 </style>

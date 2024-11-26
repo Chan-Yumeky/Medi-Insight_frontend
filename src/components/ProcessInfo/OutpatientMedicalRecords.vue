@@ -12,7 +12,7 @@
             <el-container>
                 <el-main style="padding: 0;" class="wrapper">
                     <div v-if="activeName == '0'">
-                        <BasicInfo></BasicInfo>
+                        <BasicInfo :pid = props.pid></BasicInfo>
                     </div>
                     <div v-if="activeName == '1'">
                         <Suspense>
@@ -108,8 +108,9 @@ import BasicInfo from '../Outpatient/BasicInfo.vue';
 const AsyncModelViewer = defineAsyncComponent(() =>
     import('@/components/Outpatient/HeartModel.vue')
 );
-defineProps({
+const props = defineProps({
     sid: { type: String, required: true },
+    pid: { type: String, required: true }
 });
 let activeName = ref('0')
 const patient = ref({})
@@ -138,12 +139,14 @@ const bindData = () => {
     editor.setBindObject(patient.value)
 }
 
-const handleClick = () => {
-
-}
 </script>
 <style scoped>
 .wrapper::-webkit-scrollbar {
     display: none;
+}
+
+.wrapper{
+    height:100%;
+    width:100%;
 }
 </style>
