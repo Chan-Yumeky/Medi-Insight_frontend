@@ -25,10 +25,11 @@ function takeAccessToken() {
     return authObj.token
 }
 
-function storeAccessToken(remember, token, expire) {
+function storeAccessToken(remember, token, expire, id) {
     const authObj = {
         token: token,
-        expire: expire
+        expire: expire,
+        id: id
     }
     const str = JSON.stringify(authObj)
     if (remember)
@@ -85,8 +86,8 @@ function login(username, password, remember, success, failure = defaultFailure) 
         // security只支持表单提交，而默认是JSON
         'Content-Type': 'application/x-www-form-urlencoded'
     }, (data) => {
-        storeAccessToken(remember, data.token, data.expire)
-        ElMessage.success(`登录成功，欢迎 ${data.username} 来到我们的系统`)
+        storeAccessToken(remember, data.token, data.expire, data.id)
+        ElMessage.success(`登录成功，欢迎 ${data.id} ${data.username} 来到我们的系统`)
         success(data)
     }, failure)
 }
