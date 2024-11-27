@@ -20,7 +20,7 @@
                         <PrescriptionComp></PrescriptionComp>
                     </div>
                     <div v-if="activeName == '2'">
-                        <MedicalRecordComp :pid="props.pid"></MedicalRecordComp>
+                        <MedicalRecordComp :pid="props.p"></MedicalRecordComp>
  
                     </div>
                     <div v-if="activeName == '3'">
