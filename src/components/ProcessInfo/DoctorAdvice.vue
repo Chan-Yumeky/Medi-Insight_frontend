@@ -1,5 +1,5 @@
 <template>
-    <div style="padding: 1em; background-color: white;">
+    <div style="padding: 1em; background-color: white; height: calc(100vh - 7.2em); overflow-y: scroll;">
         <Transition name="slide-fade">
             <div v-if="isshow">
                 <h3 style="padding: 1em 0;">药物部分</h3>
