@@ -8,6 +8,10 @@
                             <h3 class="small justify-center" text="2xl">{{ item }}</h3>
                         </el-carousel-item>
                     </el-carousel>
+                    <div style="border: 1px solid black;height: 20em;">
+                        <!-- TODO: -->
+                        诊断量统计
+                    </div>
                     <div class="main-title">
                         <h1>Explore</h1>
                         <p>do what you want</p>
