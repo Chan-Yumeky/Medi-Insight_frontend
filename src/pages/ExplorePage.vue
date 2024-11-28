@@ -96,7 +96,7 @@ const initChart1 = async () => {
   // 获取的后端数据的格式示例：
 
   // {
-  //   "patientFlow": [120, 200, 150, 80, 70, 110, 90, 130, 160, 200, 170, 210],
+  //   "patientFlow": [120, 200, 150, 80],
   //     "monthlyFlow": [
   //   { "value": 120, "name": "Jan" },
   //   { "value": 132, "name": "Feb" },
