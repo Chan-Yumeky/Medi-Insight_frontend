@@ -93,6 +93,29 @@ const initChart1 = async () => {
 
   const data = await fetchData(); // 获取后端数据
 
+  // 获取的后端数据的格式示例：
+
+  // {
+  //   "patientFlow": [120, 200, 150, 80, 70, 110, 90, 130, 160, 200, 170, 210],
+  //     "monthlyFlow": [
+  //   { "value": 120, "name": "Jan" },
+  //   { "value": 132, "name": "Feb" },
+  //   { "value": 101, "name": "Mar" },
+  //   { "value": 134, "name": "Apr" },
+  //   { "value": 90, "name": "May" },
+  //   { "value": 230, "name": "Jun" },
+  //   { "value": 210, "name": "Jul" },
+  //   { "value": 150, "name": "Aug" },
+  //   { "value": 320, "name": "Sep" },
+  //   { "value": 210, "name": "Oct" },
+  //   { "value": 165, "name": "Nov" },
+  //   { "value": 200, "name": "Dec" }
+  // ],
+  //     "weekFlow": [120, 200, 150, 80, 70, 110, 130],
+  //     "totalPatients": 1000
+  // }
+
+
   const chartOptions = {
     title: { text: "季度患者流量趋势", left: "center" },
     xAxis: {
