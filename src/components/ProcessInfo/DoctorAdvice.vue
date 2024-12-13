@@ -89,7 +89,7 @@
                         <el-table-column label="检查项" prop="procedureName" width="100"></el-table-column>
                         <el-table-column label="检查内容">
                             <template #default="{ row }">
-                                <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions"
+                                <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions1"
                                     @select="(selected) => onProcedureSelected(row, selected)" placeholder="请输入检查内容"
                                     class="autocomplete-input" :style="{ width: '100%' }">
                                 </el-autocomplete>
@@ -154,11 +154,12 @@ import { onMounted, ref } from 'vue';
 
 let isshow = ref(false);
 let medicationList = ref([]);
+let procedureList = ref([]);
 onMounted(async() => {
     isshow.value = true;
     try {
         // 使用 fetch 加载 public 目录下的 medications.json 文件
-        const response = await fetch('/medications.json');
+        const response = await fetch('/ndc.json');
         if (!response.ok) {
             throw new Error('Failed to load medications.json');
         }
@@ -168,7 +169,31 @@ onMounted(async() => {
         medicationList.value = data.map((item) => ({
             value: `${item.chinese_name} ${item.ndc}`,
             drugName: item.drugName,
-            ndcCode: item.ndcCode
+            cnName: item.chinese_name,
+            ndcCode: item.ndcCode,
+            dosage_form: item.dosage_form,
+            dosage_unit: item.dosage_unit,
+            dosage_strength: item.dosage_strength
+        }));
+    } catch (error) {
+        console.error('Error loading medications.json:', error);
+    }
+
+    try {
+        // 使用 fetch 加载 public 目录下的 medications.json 文件
+        const response = await fetch('/icd9proc.json');
+        if (!response.ok) {
+            throw new Error('Failed to load medications.json');
+        }
+        // 解析 JSON 数据
+        const data = await response.json();
+        // 假设 medications.json 中包含药物名和 NDC 码
+        procedureList.value = data.map((item) => ({
+            value: `${item.CN_DETAILED} ${item.ICD9_CODE}`,
+            cnName: item.CN_DETAILED,
+            procName: item.SHORT_TITLE,
+            icd9Code: item.ICD9_CODE,
+            desc: item.LONG_TITLE,
         }));
     } catch (error) {
         console.error('Error loading medications.json:', error);
@@ -216,24 +241,20 @@ const removeProcedureRow = (index: number) => {
 // Fetch suggestions for both drug and procedure parts (Example: fetchSuggestions)
 const fetchSuggestions = (query: string, callback: Function) => {
     if (!query) {
-        callback(medicationList.value);
-        return;
+        return [];
     }
-
     const results = medicationList.value.filter(item =>
-        item.drugName.toLowerCase().includes(query.toLowerCase())
+        item.cnName.toLowerCase().includes(query.toLowerCase())
     );
     callback(results);
 };
 
 const fetchSuggestions1 = (query: string, callback: Function) => {
-    // Example for fetching procedure types or drug types
     if (!query) {
-        callback(medicationList.value);
-        return;
+        return [];
     }
-    const results = medicationList.value.filter(item =>
-        item.chineseName.toLowerCase().includes(query.toLowerCase())
+    const results = procedureList.value.filter(item =>
+        item.cnName.toLowerCase().includes(query.toLowerCase())
     );
     callback(results);
 };
