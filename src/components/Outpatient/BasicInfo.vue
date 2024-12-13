@@ -92,16 +92,13 @@ onMounted(async () => {
 })
 
 const userInfo = ref({
-    username: '张三',
-    gender: '男',
-    age: '30',
-    idNumber: '123456789012345678',
-    phone: '13812345678',
-    address: '北京市朝阳区',
+    username: '',
+    gender: '',
+    age: '',
+    idNumber: '',
+    phone: '',
+    address: '',
     records: [
-        { date: '2023-01-01', diagnosis: '感冒', treatment: '吃药' },
-        { date: '2023-02-01', diagnosis: '发烧', treatment: '打针' },
-        { date: '2023-03-01', diagnosis: '咳嗽', treatment: '输液' },
     ],
 });
 

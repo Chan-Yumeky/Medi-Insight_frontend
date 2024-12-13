@@ -6,25 +6,21 @@
                     <el-menu-item @click="activeName = '0'">基本信息</el-menu-item>
                     <el-menu-item @click="activeName = '1'">诊断录入</el-menu-item>
                     <el-menu-item @click="activeName = '2'">病历录入</el-menu-item>
-                    <el-menu-item @click="activeName = '3'">
+                    <el-menu-item @click="changeToHyperInsight">
                         <div class="hyper-title">HyperInsight</div>
                     </el-menu-item>
                 </el-menu>
             </el-aside>
             <el-container>
                 <el-main style="padding: 0;" class="wrapper">
-                    <div v-if="activeName == '0'">
+                    <div v-if="activeName === '0'">
                         <BasicInfo :pid=props.pid></BasicInfo>
                     </div>
-                    <div v-if="activeName == '1'">
-                        <PrescriptionComp></PrescriptionComp>
+                    <div v-if="activeName === '1'">
+                        <PrescriptionComp :pid=props.pid></PrescriptionComp>
                     </div>
-                    <div v-if="activeName == '2'">
-                        <MedicalRecordComp :pid="props.p"></MedicalRecordComp>
- 
-                    </div>
-                    <div v-if="activeName == '3'">
-                        <HyperInsight></HyperInsight>
+                    <div v-if="activeName === '2'">
+                        <MedicalRecordComp :pid="props.pid"></MedicalRecordComp>
                     </div>
                 </el-main>
             </el-container>
@@ -38,13 +34,19 @@ import PrescriptionComp from '../Outpatient/PrescriptionComp.vue';
 import BasicInfo from '../Outpatient/BasicInfo.vue';
 import HyperInsight from '../Outpatient/HyperInsight.vue';
 import MedicalRecordComp from '../Outpatient/MedicalRecordComp.vue';
+import { useRouter } from 'vue-router';
 const props = defineProps({
     sid: { type: String, required: true },
     pid: { type: String, required: true }
 });
 let activeName = ref('0')
-
-
+let router =  useRouter();
+const changeToHyperInsight = ()=>{
+    router.push({
+        name: 'hyperinsight',
+        params: { pid: props.pid }
+    })
+}
 </script>
 <style scoped>
 .wrapper::-webkit-scrollbar {

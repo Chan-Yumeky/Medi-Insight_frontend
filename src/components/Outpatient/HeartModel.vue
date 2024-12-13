@@ -27,7 +27,7 @@ onMounted(() => {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0xffffff); // 设置白色背景
+    renderer.setClearColor(0xb143b); // 设置白色背景
     rendererContainer.value.appendChild(renderer.domElement);
 
     // 添加摄像头控制器
