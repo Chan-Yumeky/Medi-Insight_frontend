@@ -2,6 +2,7 @@
     <div style="padding: 1em; background-color: white; height: calc(100vh - 7.2em); overflow-y: scroll;">
         <Transition name="slide-fade">
             <div v-if="isshow">
+                <!-- 药物部分 -->
                 <h3 style="padding: 1em 0;">药物部分</h3>
                 <div class="drug-frame">
                     <el-button type="danger" @click="clearAllRows" style="margin-bottom: 0.5em;">
@@ -28,16 +29,12 @@
                         </el-table-column>
                         <el-table-column label="开始日期">
                             <template #default="{ row }">
-                                <el-date-picker v-model="row.startDate" style="width: 100%;">
-
-                                </el-date-picker>
+                                <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
                             </template>
                         </el-table-column>
                         <el-table-column label="结束日期">
                             <template #default="{ row }">
-                                <el-date-picker v-model="row.endDate" style="width: 100%;">
-
-                                </el-date-picker>
+                                <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
                             </template>
                         </el-table-column>
                         <el-table-column label="NDC码">
@@ -79,79 +76,70 @@
                         </el-table-column>
                     </el-table>
                 </div>
+                
+                <!-- 检查部分 (Frame) -->
                 <h3 style="padding: 1em 0;">检查部分</h3>
                 <div class="procedure-frame">
                     <el-button type="danger" @click="clearAllRows" style="margin-bottom: 0.5em;">
-                        清空所有医嘱
+                        清空所有检查项
                     </el-button>
 
-                    <el-button type="primary" @click="addAdviceRow" style="margin-bottom: 0.5em;">添加医嘱</el-button>
-                    <el-table :data="rows" border style="width: 100%" ref="table" :row-key="row => row.adviceName">
-                        <el-table-column label="医嘱项" prop="adviceName" width="100"></el-table-column>
-                        <el-table-column label="药物名">
+                    <el-button type="primary" @click="addProcedureRow" style="margin-bottom: 0.5em;">添加检查项</el-button>
+                    <el-table :data="procedureRows" border style="width: 100%" ref="table" :row-key="row => row.procedureName">
+                        <el-table-column label="检查项" prop="procedureName" width="100"></el-table-column>
+                        <el-table-column label="检查内容">
                             <template #default="{ row }">
-                                <el-autocomplete v-model="row.drug" :fetch-suggestions="fetchSuggestions"
-                                    @select="(selected) => onDrugSelected(row, selected)" placeholder="请输入医嘱内容"
+                                <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions1"
+                                    @select="(selected) => onProcedureSelected(row, selected)" placeholder="请输入检查内容"
                                     class="autocomplete-input" :style="{ width: '100%' }">
                                 </el-autocomplete>
                             </template>
                         </el-table-column>
-                        <el-table-column label="药物分类标签">
+                        <el-table-column label="检查类型">
                             <template #default="{ row }">
-                                <el-autocomplete v-model="row.drugType" :fetch-suggestions="fetchSuggestions1"
-                                    placeholder="请输入医嘱内容" class="autocomplete-input" :style="{ width: '100%' }">
+                                <el-autocomplete v-model="row.procedureType" :fetch-suggestions="fetchSuggestions1"
+                                    placeholder="请输入检查类型" class="autocomplete-input" :style="{ width: '100%' }">
                                 </el-autocomplete>
                             </template>
                         </el-table-column>
                         <el-table-column label="开始日期">
                             <template #default="{ row }">
-                                <el-date-picker v-model="row.startDate" style="width: 100%;">
-
-                                </el-date-picker>
+                                <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
                             </template>
                         </el-table-column>
                         <el-table-column label="结束日期">
                             <template #default="{ row }">
-                                <el-date-picker v-model="row.endDate" style="width: 100%;">
-
-                                </el-date-picker>
+                                <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
                             </template>
                         </el-table-column>
-                        <el-table-column label="NDC码">
+                        <el-table-column label="编码">
                             <template #default="{ row }">
-                                <el-input v-model="row.ndcCode" disabled></el-input>
+                                <el-input v-model="row.procedureCode" disabled></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column label="计量强度">
+                        <el-table-column label="检查强度">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosageStrength" disabled></el-input>
+                                <el-input v-model="row.intensity" disabled></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column label="计量值">
+                        <el-table-column label="检查结果">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosage"></el-input>
+                                <el-input v-model="row.result"></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column label="计量单位">
+                        <el-table-column label="检查单位">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosageUnit" disabled></el-input>
+                                <el-input v-model="row.unit" disabled></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column label="形式">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosageForm" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="途径">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.route" :fetch-suggestions="fetchSuggestions2"
-                                    placeholder="请输入医嘱内容" class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
+                                <el-input v-model="row.procedureForm" disabled></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column label="操作">
                             <template #default="{ row, $index }">
-                                <el-button @click="removeAdviceRow($index)" type="danger" size="small">删除</el-button>
+                                <el-button @click="removeProcedureRow($index)" type="danger" size="small">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -163,12 +151,56 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-let isshow = ref(false);
-onMounted(() => {
-    isshow.value = true;
-})
-const columns = ref<string[]>(['医嘱内容']);
 
+let isshow = ref(false);
+let medicationList = ref([]);
+let procedureList = ref([]);
+onMounted(async() => {
+    isshow.value = true;
+    try {
+        // 使用 fetch 加载 public 目录下的 medications.json 文件
+        const response = await fetch('/ndc.json');
+        if (!response.ok) {
+            throw new Error('Failed to load medications.json');
+        }
+        // 解析 JSON 数据
+        const data = await response.json();
+        // 假设 medications.json 中包含药物名和 NDC 码
+        medicationList.value = data.map((item) => ({
+            value: `${item.chinese_name} ${item.ndc}`,
+            drugName: item.drugName,
+            cnName: item.chinese_name,
+            ndcCode: item.ndcCode,
+            dosage_form: item.dosage_form,
+            dosage_unit: item.dosage_unit,
+            dosage_strength: item.dosage_strength
+        }));
+    } catch (error) {
+        console.error('Error loading medications.json:', error);
+    }
+
+    try {
+        // 使用 fetch 加载 public 目录下的 medications.json 文件
+        const response = await fetch('/icd9proc.json');
+        if (!response.ok) {
+            throw new Error('Failed to load medications.json');
+        }
+        // 解析 JSON 数据
+        const data = await response.json();
+        // 假设 medications.json 中包含药物名和 NDC 码
+        procedureList.value = data.map((item) => ({
+            value: `${item.CN_DETAILED} ${item.ICD9_CODE}`,
+            cnName: item.CN_DETAILED,
+            procName: item.SHORT_TITLE,
+            icd9Code: item.ICD9_CODE,
+            desc: item.LONG_TITLE,
+        }));
+    } catch (error) {
+        console.error('Error loading medications.json:', error);
+    }
+});
+
+// 药物部分 (Drug section)
 const rows = ref([
     {
         adviceName: '1', adviceContent: '', startDate: '', endDate: '',
@@ -182,182 +214,62 @@ const AdviceContentList = ref([
 
 const addAdviceRow = () => {
     const newRow = { adviceName: `${rows.value.length + 1}`, adviceContent: '' };
-
-    columns.value.forEach((col, index) => {
-        newRow[`Advice${index + 1}`] = '';
-    });
-
     rows.value.push(newRow);
 };
 
 const removeAdviceRow = (index: number) => {
     rows.value.splice(index, 1);
-    resetAdviceNames();
 };
 
-const clearAllRows = () => {
-    rows.value = [];
+// 检查部分 (Procedure section)
+const procedureRows = ref([
+    {
+        procedureName: '检查1', procedureContent: '', startDate: '', endDate: '',
+        procedureType: '', procedure: '', procedureCode: '', intensity: '', result: '', unit: '', procedureForm: '', route: ''
+    },
+]);
+
+const addProcedureRow = () => {
+    const newRow = { procedureName: `${procedureRows.value.length + 1}`, procedureContent: '' };
+    procedureRows.value.push(newRow);
 };
 
-const resetAdviceNames = () => {
-    rows.value.forEach((row, index) => {
-        row.adviceName = `${index + 1}`;
-    });
+const removeProcedureRow = (index: number) => {
+    procedureRows.value.splice(index, 1);
 };
 
+// Fetch suggestions for both drug and procedure parts (Example: fetchSuggestions)
 const fetchSuggestions = (query: string, callback: Function) => {
     if (!query) {
-        callback(AdviceContentList.value.map(item => ({ value: item })));
-        return;
+        return [];
     }
-
-    const results = AdviceContentList.value
-        .filter((item) => item.includes(query))
-        .map(item => ({ value: item }));
-
+    const results = medicationList.value.filter(item =>
+        item.cnName.toLowerCase().includes(query.toLowerCase())
+    );
     callback(results);
 };
-
-const drugTypeList = ref([
-    'MAIN', 'BASE', 'ADDITIVE'
-])
-
-const routeList = ref([
-    'IV（静脉注射）', 'PO（口服）', 'IM（肌肉注射）'
-])
 
 const fetchSuggestions1 = (query: string, callback: Function) => {
     if (!query) {
-        callback(drugTypeList.value.map(item => ({ value: item })));
-        return;
+        return [];
     }
-
-    const results = drugTypeList.value
-        .filter((item) => item.includes(query))
-        .map(item => ({ value: item }));
-
+    const results = procedureList.value.filter(item =>
+        item.cnName.toLowerCase().includes(query.toLowerCase())
+    );
     callback(results);
 };
 
-const fetchSuggestions2 = (query: string, callback: Function) => {
-    if (!query) {
-        callback(routeList.value.map(item => ({ value: item })));
-        return;
-    }
-
-    const results = routeList.value
-        .filter((item) => item.includes(query))
-        .map(item => ({ value: item }));
-
-    callback(results);
-};
-
+// Function when a drug or procedure is selected (You can adjust according to the data structure)
 const onDrugSelected = (row: any, selected: any) => {
-    console.log(`${row} is selected`);
-    const vals = selected.value.split(' ');
-    row.drug = vals[0];
-    row.ndcCode = vals[2];
-    row.dosageStrength = vals[3] + ' ' + vals[4];
-    row.dosageUnit = vals[3].substring(1)
-    const form: String = vals[4].substring(0, 3);
-    row.dosageForm = form.toUpperCase();
+    const selectedDrug = selected.value.split(' ');
+    row.drug = selectedDrug[0]; // 药物名
+    row.ndcCode = selectedDrug[1]; // NDC 码
+    // Handle drug selection logic here
 };
 
-// const columns1 = ref<string[]>(['医嘱内容']);
-
-// const rows1 = ref([
-//     {
-//         adviceName: '1', adviceContent: '', startDate: '', endDate: '',
-//         drugType: '', drug: '', ndcCode: '', dosageStrength: '', dosage: '', dosageUnit: '', dosageForm: '', route: ''
-//     },
-// ]);
-
-// const AdviceContentList1 = ref([
-//     '他克莫司 Tacrolimus 00469061711 1mg Capsule', '华法林 Warfarin 00056017275 5mg Tablet'
-// ]);
-
-// const addAdviceRow = () => {
-//     const newRow = { adviceName: `${rows1.value.length + 1}`, adviceContent: '' };
-
-//     columns.value.forEach((col, index) => {
-//         newRow[`Advice${index + 1}`] = '';
-//     });
-
-//     rows1.value.push(newRow);
-// };
-
-// const removeAdviceRow = (index: number) => {
-//     rows1.value.splice(index, 1);
-//     resetAdviceNames();
-// };
-
-// const clearAllRows = () => {
-//     rows1.value = [];
-// };
-
-// const resetAdviceNames = () => {
-//     rows1.value.forEach((row, index) => {
-//         row.adviceName = `${index + 1}`;
-//     });
-// };
-
-// const fetchSuggestions = (query: string, callback: Function) => {
-//     if (!query) {
-//         callback(AdviceContentList1.value.map(item => ({ value: item })));
-//         return;
-//     }
-
-//     const results = AdviceContentList1.value
-//         .filter((item) => item.includes(query))
-//         .map(item => ({ value: item }));
-
-//     callback(results);
-// };
-
-// const drugTypeList = ref([
-//     'MAIN', 'BASE', 'ADDITIVE'
-// ])
-
-// const routeList = ref([
-//     'IV（静脉注射）', 'PO（口服）', 'IM（肌肉注射）'
-// ])
-
-// const fetchSuggestions1 = (query: string, callback: Function) => {
-//     if (!query) {
-//         callback(drugTypeList.value.map(item => ({ value: item })));
-//         return;
-//     }
-
-//     const results = drugTypeList.value
-//         .filter((item) => item.includes(query))
-//         .map(item => ({ value: item }));
-
-//     callback(results);
-// };
-
-// const fetchSuggestions2 = (query: string, callback: Function) => {
-//     if (!query) {
-//         callback(routeList.value.map(item => ({ value: item })));
-//         return;
-//     }
-
-//     const results = routeList.value
-//         .filter((item) => item.includes(query))
-//         .map(item => ({ value: item }));
-
-//     callback(results);
-// };
-
-// const onDrugSelected = (row: any, selected: any) => {
-//     console.log(`${row} is selected`);
-//     const vals = selected.value.split(' ');
-//     row.drug = vals[0];
-//     row.ndcCode = vals[2];
-//     row.dosageStrength = vals[3] + ' ' + vals[4];
-//     row.dosageUnit = vals[3].substring(1)
-//     const form: String = vals[4].substring(0, 3);
-//     row.dosageForm = form.toUpperCase();
-// };
+const onProcedureSelected = (row: any, selected: any) => {
+    // Handle procedure selection logic here
+};
 </script>
 
 <style scoped>
@@ -369,22 +281,12 @@ const onDrugSelected = (row: any, selected: any) => {
     height: 40px;
 }
 
-
-.drug-frame {
-    height:45vh;
+.drug-frame, .procedure-frame {
+    height: 45vh;
     overflow-y: scroll;
 }
 
-.drug-frame::-webkit-scrollbar {
-    display: none;
-}
-
-.procedure-frame {
-    height:45vh;
-    overflow-y: scroll;
-}
-
-.procedure-frame::-webkit-scrollbar{
+.drug-frame::-webkit-scrollbar, .procedure-frame::-webkit-scrollbar {
     display: none;
 }
 </style>

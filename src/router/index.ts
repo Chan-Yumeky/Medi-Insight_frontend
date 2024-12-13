@@ -6,6 +6,7 @@ import AttendancePage from "@/pages/AttendancePage.vue";
 import ProcessPage from "@/pages/ProcessPage.vue";
 import MainPage from "@/pages/MainPage.vue";
 import {unauthorized} from "@/net/index.js";
+import HyperInsight from "@/components/Outpatient/HyperInsight.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -52,6 +53,14 @@ const router = createRouter({
                     }),
                 }
             ]
+        },
+        {
+            path:'/hyperinsight/:pid',
+            name:'hyperinsight',
+            component:HyperInsight,
+            props: route =>({
+                pid:route.params.pid
+            })
         }
     ]
 })

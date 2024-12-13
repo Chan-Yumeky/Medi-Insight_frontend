@@ -12,9 +12,12 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@dataview/datav-vue3": "0.0.0-test.1672506674342",
     "@element-plus/icons-vue": "^2.3.1",
+    "@jiaminghi/data-view": "^2.10.0",
     "axios": "^1.7.7",
     "echarts": "^5.5.1",
+    "echarts-liquidfill": "^3.1.0",
     "element-plus": "^2.8.3",
     "pinia": "^2.2.6",
     "three": "^0.168.0",
