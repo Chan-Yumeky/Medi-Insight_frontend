@@ -10,40 +10,34 @@
                         <ArrowLeftBold />
                     </el-icon></el-button>
             </div>
-            <img src="../../assets/3.png" alt="" style="width: 100%; position: fixed; top: 0; left: 0; z-index: 1;">
+            <img src="../../assets/screen/3.png" alt="" style="width: 100%; position: fixed; top: 0; left: 0; z-index: 1;">
             <div style="height: 4em; display: flex; justify-content: center; align-items: center; width: 100%;">
-                <!-- <Decoration3 style="width:200px; height:30px;" /> -->
                 <h1 class="glow-text">HyperInsight</h1>
-                <!-- <Decoration3 style="width:200px; height:30px;" /> -->
             </div>
         </header>
         <div class="main-content">
             <div class="left" style="width: 30%; box-sizing: border-box; padding-left: 1em; height: 86vh;">
-                <!-- <BorderBox13> -->
                 <div id="main" style="height: 50%;width: 100%;"></div>
                 <div id="main1" style="height: 50%; width: 100%;"></div>
-                <!-- </BorderBox13> -->
             </div>
             <div class="center">
                 <div id="mainc"
                     style="height: 90vh;width: 100%;  display: flex;justify-content: center;align-items: center; position: absolute;">
                 </div>
-                <img src="../../assets/医疗1.png" alt=""
+                <img src="../../assets/screen/医疗1.png" alt=""
                     style="height: 90vh; display: flex;justify-content: center;align-items: center;">
             </div>
             <div class="right" style="width: 30%;box-sizing: border-box; padding-right: 1em; height: 86vh;">
-                <!-- <BorderBox13> -->
                 <div class="heatmap">
                     <div id="main2" style="height: 100%;width: 100%;"></div>
                 </div>
                 <div class="bar">
                     <div id="main4" style="height: 100%;width: 100%;"></div>
                 </div>
-                <!-- </BorderBox13> -->
             </div>
         </div>
         <div style="position: fixed;bottom: 0;left: 0; display: flex;justify-content: center;align-items: center;">
-            <img src="../../assets/1-1.png" alt="" style="width: 100%; ">
+            <img src="../../assets/screen/1-1.png" alt="" style="width: 100%; ">
         </div>
     </div>
 </template>
@@ -757,7 +751,7 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     background-color: #0b143b;
-    background-image: url('../../assets/42.gif');
+    background-image: url('../../assets/screen/42.gif');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -794,7 +788,7 @@ onUnmounted(() => {
     /* 毛玻璃效果 */
     border-radius: 5px;
     padding: 1em;
-    background-image: url('../../assets/(263).png');
+    background-image: url('../../assets/screen/(263).png');
     background-size: 100% 100%;
     /* 背景图填充整个盒子尺寸 */
     background-position: center;
@@ -818,7 +812,7 @@ onUnmounted(() => {
 
 .heatmap {
     margin-left: 0.5em;
-    background-image: url('../../assets/(100).png');
+    background-image: url('../../assets/screen/(100).png');
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
