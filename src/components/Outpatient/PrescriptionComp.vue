@@ -7,7 +7,7 @@
                 </el-button>
 
                 <el-button type="primary" @click="addDiagnosisRow" style="margin-bottom: 0.5em;">添加诊断</el-button>
-
+                <el-button @click="saveDiagnosisData" style="margin-bottom: 0.5em;">保存</el-button>
                 <el-table :data="rows" border style="width: 100%" ref="table" :row-key="row => row.diagnosisName">
                     <el-table-column label="诊断项" prop="diagnosisName" width="100"></el-table-column>
 
@@ -46,19 +46,19 @@ const diagnosisContentList = ref([
 onMounted(async () => {
   isshow.value = true;
   // 恢复特定病人数据
-  const savedRows = localStorage.getItem(`diagnosisRows_${props.pid}`);
+  const savedRows = localStorage.getItem(`diagnosis_${props.pid}`);
   if (savedRows) {
     rows.value = JSON.parse(savedRows);
   }
 
   try {
-    const file = '/icd9cm.json';
+    const file = '/CCSCM_cleaned.json';
     const response = await fetch(file); // 确保路径正确
     if (!response.ok) {
       throw new Error('Failed to load JSON file');
     }
     const data = await response.json();
-    diagnosisContentList.value = data.map(item => `${item.ICD9_CODE} - ${item.CN_DETAILED}`);
+    diagnosisContentList.value = data.map(item => `${item.code} - ${item.cn_name}`);
   } catch (error) {
     console.error('Error loading JSON file:', error);
   }
@@ -66,25 +66,11 @@ onMounted(async () => {
 
 const columns = ref<string[]>(['诊断内容']);
 const rows = ref<Array<{ [key: string]: string }>>([
-  { diagnosisName: '诊断1', diagnosisContent: '', diagnosis1: '' }
+  { diagnosisName: '诊断1', diagnosisContent: ''}
 ]);
 
-// 监听 rows 中的 diagnosisContent 字段变化
-watch(
-  () => rows.value,
-  (newRows) => {
-    saveDiagnosisData(); // 数据变化时保存到 localStorage
-  },
-  { deep: true } // 深度监听，监听对象内部的变化
-);
-
 const addDiagnosisRow = () => {
-  const newRow = { diagnosisName: `诊断${rows.value.length + 1}`, diagnosisContent: '' };
-
-  columns.value.forEach((col, index) => {
-    newRow[`diagnosis${index + 1}`] = '';
-  });
-
+  const newRow = { diagnosisName: `诊断${rows.value.length + 1}`};
   rows.value.push(newRow);
 };
 
@@ -118,7 +104,9 @@ const fetchSuggestions = (query: string, callback: Function) => {
 
 // 存储当前诊断数据到 localStorage，使用病人ID作为 key
 const saveDiagnosisData = () => {
-  localStorage.setItem(`diagnosisRows_${props.pid}`, JSON.stringify(rows.value));
+  localStorage.removeItem(`diagnosis_${props.pid}`)
+  localStorage.setItem(`diagnosis_${props.pid}`, JSON.stringify(rows.value));
+  console.log(localStorage.getItem(`diagnosis_${props.pid}`))
 };
 </script>
 

@@ -7,20 +7,19 @@
         </header>
         <el-table :data="patientList" border style="width: 100%">
             <el-table-column prop="id" label="登记号" />
-            <el-table-column prop="name" label="姓名" />
-            <el-table-column prop="gender" label="性别" />
-            <el-table-column prop="birthday" label="出生日期" />
-            <el-table-column prop="age" label="年龄" />
+            <el-table-column prop="patient.username" label="姓名" />
+            <el-table-column prop="patient.gender" label="性别" />
+            <el-table-column prop="patient.birthday" label="出生日期" />
+            <el-table-column prop="patient.age" label="年龄" />
             <el-table-column prop="status" label="状态" />
             <el-table-column prop="source" label="来源" />
-            <el-table-column prop="diagnostic" label="诊断" />
-            <el-table-column prop="doctor" label="医生" />
-            <el-table-column prop="department" label="科室" />
+            <el-table-column prop="doctor.username" label="医生" />
+            <el-table-column prop="doctor.department" label="科室" />
             <el-table-column prop="bookTime" label="预订时间" />
             <el-table-column prop="startTime" label="就诊时间" />
             <el-table-column fixed="right" label="操作" min-width="50">
                 <template #default="scope">
-                    <el-button link type="primary" size="small" @click="handleClick(scope.row.id, scope.row.pid)">
+                    <el-button link type="primary" size="small" @click="handleClick(scope.row.id, scope.row.patient.id)">
                         接诊
                     </el-button>
                 </template>
@@ -41,7 +40,7 @@ const router = useRouter()
 const handleClick = (sid: any, pid: any) => {
     console.log(sid, pid)
     router.push({ name: 'process', params: { sid: sid } });
-    sessionStorage.setItem('cur_pid', pid)
+    localStorage.setItem('cur_pid', pid)
 }
 
 onMounted(async () => {

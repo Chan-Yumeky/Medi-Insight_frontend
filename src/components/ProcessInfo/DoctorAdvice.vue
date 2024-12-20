@@ -10,6 +10,7 @@
                     </el-button>
 
                     <el-button type="primary" @click="addAdviceRow" style="margin-bottom: 0.5em;">添加医嘱</el-button>
+                    <el-button @click="saveDrugData" style="margin-bottom: 0.5em;">保存</el-button>
                     <el-table :data="rows" border style="width: 100%" ref="table" :row-key="row => row.adviceName">
                         <el-table-column label="医嘱项" prop="adviceName" width="100"></el-table-column>
                         <el-table-column label="药物名">
@@ -17,13 +18,6 @@
                                 <el-autocomplete v-model="row.drug" :fetch-suggestions="fetchSuggestions"
                                     @select="(selected) => onDrugSelected(row, selected)" placeholder="请输入医嘱内容"
                                     class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="药物分类标签">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.drugType" :fetch-suggestions="fetchSuggestions1"
-                                    placeholder="请输入医嘱内容" class="autocomplete-input" :style="{ width: '100%' }">
                                 </el-autocomplete>
                             </template>
                         </el-table-column>
@@ -37,14 +31,9 @@
                                 <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
                             </template>
                         </el-table-column>
-                        <el-table-column label="NDC码">
+                        <el-table-column label="ATC码">
                             <template #default="{ row }">
                                 <el-input v-model="row.ndcCode" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="计量强度">
-                            <template #default="{ row }">
-                                <el-input v-model="row.dosageStrength" disabled></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column label="计量值">
@@ -54,19 +43,12 @@
                         </el-table-column>
                         <el-table-column label="计量单位">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosageUnit" disabled></el-input>
+                                <el-input v-model="row.dosageUnit"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column label="形式">
                             <template #default="{ row }">
-                                <el-input v-model="row.dosageForm" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="途径">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.route" :fetch-suggestions="fetchSuggestions2"
-                                    placeholder="请输入医嘱内容" class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
+                                <el-input v-model="row.dosageForm"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column label="操作">
@@ -76,7 +58,7 @@
                         </el-table-column>
                     </el-table>
                 </div>
-                
+
                 <!-- 检查部分 (Frame) -->
                 <h3 style="padding: 1em 0;">检查部分</h3>
                 <div class="procedure-frame">
@@ -85,20 +67,15 @@
                     </el-button>
 
                     <el-button type="primary" @click="addProcedureRow" style="margin-bottom: 0.5em;">添加检查项</el-button>
-                    <el-table :data="procedureRows" border style="width: 100%" ref="table" :row-key="row => row.procedureName">
+                    <el-button @click="saveProcedureData" style="margin-bottom: 0.5em;">保存</el-button>
+                    <el-table :data="procedureRows" border style="width: 100%" ref="table"
+                        :row-key="row => row.procedureName">
                         <el-table-column label="检查项" prop="procedureName" width="100"></el-table-column>
                         <el-table-column label="检查内容">
                             <template #default="{ row }">
                                 <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions1"
                                     @select="(selected) => onProcedureSelected(row, selected)" placeholder="请输入检查内容"
                                     class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="检查类型">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.procedureType" :fetch-suggestions="fetchSuggestions1"
-                                    placeholder="请输入检查类型" class="autocomplete-input" :style="{ width: '100%' }">
                                 </el-autocomplete>
                             </template>
                         </el-table-column>
@@ -117,26 +94,6 @@
                                 <el-input v-model="row.procedureCode" disabled></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column label="检查强度">
-                            <template #default="{ row }">
-                                <el-input v-model="row.intensity" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="检查结果">
-                            <template #default="{ row }">
-                                <el-input v-model="row.result"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="检查单位">
-                            <template #default="{ row }">
-                                <el-input v-model="row.unit" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="形式">
-                            <template #default="{ row }">
-                                <el-input v-model="row.procedureForm" disabled></el-input>
-                            </template>
-                        </el-table-column>
                         <el-table-column label="操作">
                             <template #default="{ row, $index }">
                                 <el-button @click="removeProcedureRow($index)" type="danger" size="small">删除</el-button>
@@ -151,15 +108,21 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-
+const props = defineProps({
+    pid: { type: String, required: true }
+});
 let isshow = ref(false);
 let medicationList = ref([]);
 let procedureList = ref([]);
-onMounted(async() => {
+onMounted(async () => {
     isshow.value = true;
+    const savedRows = localStorage.getItem(`drug_${props.pid}`);
+    if (savedRows) {
+        rows.value = JSON.parse(savedRows);
+    }
     try {
         // 使用 fetch 加载 public 目录下的 medications.json 文件
-        const response = await fetch('/ndc.json');
+        const response = await fetch('/ATC_cleaned.json');
         if (!response.ok) {
             throw new Error('Failed to load medications.json');
         }
@@ -167,21 +130,21 @@ onMounted(async() => {
         const data = await response.json();
         // 假设 medications.json 中包含药物名和 NDC 码
         medicationList.value = data.map((item) => ({
-            value: `${item.chinese_name} ${item.ndc}`,
-            drugName: item.drugName,
-            cnName: item.chinese_name,
-            ndcCode: item.ndcCode,
-            dosage_form: item.dosage_form,
-            dosage_unit: item.dosage_unit,
-            dosage_strength: item.dosage_strength
+            value: `${item.code} ${item.cn_name}`,
+            drugName: item.name,
+            cnName: item.cn_name,
+            code: item.code,
         }));
     } catch (error) {
         console.error('Error loading medications.json:', error);
     }
-
+    const savedProcRows = localStorage.getItem(`procedure_${props.pid}`);
+    if (savedProcRows) {
+        procedureRows.value = JSON.parse(savedProcRows);
+    }
     try {
         // 使用 fetch 加载 public 目录下的 medications.json 文件
-        const response = await fetch('/icd9proc.json');
+        const response = await fetch('/CCSPROC_cleaned.json');
         if (!response.ok) {
             throw new Error('Failed to load medications.json');
         }
@@ -189,11 +152,10 @@ onMounted(async() => {
         const data = await response.json();
         // 假设 medications.json 中包含药物名和 NDC 码
         procedureList.value = data.map((item) => ({
-            value: `${item.CN_DETAILED} ${item.ICD9_CODE}`,
-            cnName: item.CN_DETAILED,
-            procName: item.SHORT_TITLE,
-            icd9Code: item.ICD9_CODE,
-            desc: item.LONG_TITLE,
+            value: `${item.code} ${item.cn_name}`,
+            cnName: item.cn_name,
+            name: item.name,
+            code: item.code,
         }));
     } catch (error) {
         console.error('Error loading medications.json:', error);
@@ -203,8 +165,7 @@ onMounted(async() => {
 // 药物部分 (Drug section)
 const rows = ref([
     {
-        adviceName: '1', adviceContent: '', startDate: '', endDate: '',
-        drugType: '', drug: '', ndcCode: '', dosageStrength: '', dosage: '', dosageUnit: '', dosageForm: '', route: ''
+        adviceName: '1', startDate: '', endDate: '', drug: '', ndcCode: '', dosage: '', dosageUnit: '', dosageForm: ''
     },
 ]);
 
@@ -213,7 +174,7 @@ const AdviceContentList = ref([
 ]);
 
 const addAdviceRow = () => {
-    const newRow = { adviceName: `${rows.value.length + 1}`, adviceContent: '' };
+    const newRow = { adviceName: `${rows.value.length + 1}`};
     rows.value.push(newRow);
 };
 
@@ -224,13 +185,13 @@ const removeAdviceRow = (index: number) => {
 // 检查部分 (Procedure section)
 const procedureRows = ref([
     {
-        procedureName: '检查1', procedureContent: '', startDate: '', endDate: '',
-        procedureType: '', procedure: '', procedureCode: '', intensity: '', result: '', unit: '', procedureForm: '', route: ''
+        procedureName: '1', startDate: '', endDate: '',
+        procedure: '', procedureCode: ''
     },
 ]);
 
 const addProcedureRow = () => {
-    const newRow = { procedureName: `${procedureRows.value.length + 1}`, procedureContent: '' };
+    const newRow = { procedureName: `${procedureRows.value.length + 1}`};
     procedureRows.value.push(newRow);
 };
 
@@ -241,7 +202,7 @@ const removeProcedureRow = (index: number) => {
 // Fetch suggestions for both drug and procedure parts (Example: fetchSuggestions)
 const fetchSuggestions = (query: string, callback: Function) => {
     if (!query) {
-        return [];
+        return callback(medicationList.value.map(item => ({ value: item.value })))
     }
     const results = medicationList.value.filter(item =>
         item.cnName.toLowerCase().includes(query.toLowerCase())
@@ -251,7 +212,7 @@ const fetchSuggestions = (query: string, callback: Function) => {
 
 const fetchSuggestions1 = (query: string, callback: Function) => {
     if (!query) {
-        return [];
+        return callback(procedureList.value.map(item => ({ value: item.value })))
     }
     const results = procedureList.value.filter(item =>
         item.cnName.toLowerCase().includes(query.toLowerCase())
@@ -262,13 +223,28 @@ const fetchSuggestions1 = (query: string, callback: Function) => {
 // Function when a drug or procedure is selected (You can adjust according to the data structure)
 const onDrugSelected = (row: any, selected: any) => {
     const selectedDrug = selected.value.split(' ');
-    row.drug = selectedDrug[0]; // 药物名
-    row.ndcCode = selectedDrug[1]; // NDC 码
+    row.drug = selectedDrug[1]; // 药物名
+    row.ndcCode = selectedDrug[0]; // NDC 码
     // Handle drug selection logic here
 };
 
 const onProcedureSelected = (row: any, selected: any) => {
     // Handle procedure selection logic here
+    const selectedProcedure = selected.value.split(' ');
+    row.procedure = selectedProcedure[1]; // 药物名
+    row.procedureCode = selectedProcedure[0]; // NDC 码
+};
+
+const saveDrugData = () => {
+    localStorage.removeItem(`drug_${props.pid}`)
+    localStorage.setItem(`drug_${props.pid}`, JSON.stringify(rows.value));
+    console.log(localStorage.getItem(`drug_${props.pid}`))
+};
+
+const saveProcedureData = () => {
+    localStorage.removeItem(`procedure_${props.pid}`)
+    localStorage.setItem(`procedure_${props.pid}`, JSON.stringify(procedureRows.value));
+    console.log(localStorage.getItem(`procedure_${props.pid}`))
 };
 </script>
 
@@ -281,12 +257,14 @@ const onProcedureSelected = (row: any, selected: any) => {
     height: 40px;
 }
 
-.drug-frame, .procedure-frame {
+.drug-frame,
+.procedure-frame {
     height: 45vh;
     overflow-y: scroll;
 }
 
-.drug-frame::-webkit-scrollbar, .procedure-frame::-webkit-scrollbar {
+.drug-frame::-webkit-scrollbar,
+.procedure-frame::-webkit-scrollbar {
     display: none;
 }
 </style>

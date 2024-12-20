@@ -1,6 +1,15 @@
 <template>
     <div class="containera">
+        <div v-if="maskVisible" class="mask"
+            style="height: 100vh;width: 100vw; position: fixed; top: 0;left: 0;background-color: #0b143b;z-index: 999; display: flex;justify-content: center;align-items: center;flex-direction: column;">
+            <h1
+                style="color: white; margin-bottom: 1em; font-size: 4em; text-shadow: 1px 1px 6px rgba(0, 255, 255, 0.7), 0 0 25px rgba(0, 255, 255, 0.6), 0 0 50px rgba(0, 255, 255, 0.5);">
+                HYPERINSIGHT</h1>
 
+            <el-progress type="dashboard" :stroke-width="26" :percentage="progress" style="z-index: 999"
+                :color="colors" />
+            <h3 style="color: white;">Loading...</h3>
+        </div>
         <header>
             <div
                 style="z-index: 2; position: fixed; top: 0;left: 0; width: 100%; height: 5em; display: flex;justify-content: flex-start; align-items: center;margin: 0 2em;">
@@ -10,7 +19,8 @@
                         <ArrowLeftBold />
                     </el-icon></el-button>
             </div>
-            <img src="../../assets/screen/3.png" alt="" style="width: 100%; position: fixed; top: 0; left: 0; z-index: 1;">
+            <img src="../../assets/screen/3.png" alt=""
+                style="width: 100%; position: fixed; top: 0; left: 0; z-index: 1;">
             <div style="height: 4em; display: flex; justify-content: center; align-items: center; width: 100%;">
                 <h1 class="glow-text">HyperInsight</h1>
             </div>
@@ -43,23 +53,107 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-liquidfill'
 import { ArrowLeftBold } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+const props = defineProps({
+    sid: { type: String, required: true }
+})
 
+const colors = [
+    { color: '#f56c6c', percentage: 20 },
+    { color: '#e6a23c', percentage: 40 },
+    { color: '#5cb87a', percentage: 60 },
+    { color: '#1989fa', percentage: 80 },
+    { color: '#6f7ad3', percentage: 100 },
+]
+
+let progress = ref(0)
+let maskVisible = ref(true)
 onMounted(async () => {
+    progress.value = 0
+    await getAllHistory();
+    progress.value += 15
+    await getMortality();
+    progress.value += 15
+    await getReadmission();
+    progress.value += 15
+    await getLenOfStay();
+    progress.value += 15
+    // await getDrugRecommendation();
     await initChart1();
     await initChart2();
     await initChart3();
     await initChart4();
     await initChart5();
+    progress.value = 100
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    maskVisible.value = false
 })
 
-var value = 0.16;
-var value1 = 0.39;
-var data = [value, value1];
+const all_inform = {
+    'patient_id': localStorage.getItem('cur_pid'),
+    'visit_id': props.sid,
+    'label': 1,
+    'conditions': [],
+    'procedures': [],
+    'drugs': []
+}
+
+let mortality = 0.16;
+let readmission = 0.39;
+let lenofstay = [];
+const getMortality = async () => {
+    await axios.post('http://127.0.0.1:5002/api/predict/mortality', [all_inform])
+        .then((resp) => {
+            // 处理返回的数据
+            console.log(resp.data.mortality[0])
+            mortality = resp.data.mortality[0];
+            console.log(mortality);
+        })
+        .catch((error) => {
+            // 错误处理
+            console.error("Error fetching data:", error);
+        });
+}
+
+const getReadmission = async () => {
+    await axios.post('http://127.0.0.1:5002/api/predict/readmission', [all_inform])
+        .then((resp) => {
+            // 处理返回的数据
+            console.log(resp.data.readmission[0])
+            readmission = resp.data.readmission[0];
+            console.log(readmission);
+        })
+        .catch((error) => {
+            // 错误处理
+            console.error("Error fetching data:", error);
+        });
+}
+
+const len_names = ['少于1天', '1天', '2天', '3天', '4天', '5天', '6天', '7天', '大于一周小于两周', '超过两周']
+const getLenOfStay = async () => {
+    await axios.post('http://127.0.0.1:5002/api/predict/lenofstay', [all_inform])
+        .then((resp) => {
+            // 处理返回的数据
+            console.log(resp.data.lenofstay)
+            const temp = resp.data.lenofstay;
+            for (let i = 0; i < temp.length; i++) {
+                lenofstay.push({
+                    value: temp[i],
+                    name: len_names[i]
+                })
+            }
+            console.log(lenofstay);
+        })
+        .catch((error) => {
+            // 错误处理
+            console.error("Error fetching data:", error);
+        });
+}
 
 const initChart1 = async () => {
     var chartDom = document.getElementById('main');
@@ -112,7 +206,7 @@ const initChart1 = async () => {
                 ],
                 globalCoord: false,
             },],
-            data: [value, value], // data个数代表波浪数
+            data: [mortality, mortality], // data个数代表波浪数
             backgroundStyle: {
                 borderWidth: 1,
                 color: 'RGBA(51, 66, 127, 0.7)',
@@ -154,7 +248,7 @@ const initChart1 = async () => {
                 ],
                 globalCoord: false,
             },],
-            data: [value1, value1], // data个数代表波浪数
+            data: [readmission, readmission], // data个数代表波浪数
             backgroundStyle: {
                 borderWidth: 1,
                 color: 'RGBA(51, 66, 127, 0.7)',
@@ -322,165 +416,112 @@ const initChart2 = async () => {
 }
 
 const initChart3 = async () => {
-    const xAxisData = ['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9'];
-    const yAxisData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    const seriesData = [
-        [0, 0, 10],
-        [0, 1, 19],
-        [0, 2, 8],
-        [0, 3, 24],
-        [0, 4, 67],
-        [1, 0, 92],
-        [1, 1, 58],
-        [1, 2, 78],
-        [1, 3, 117],
-        [1, 4, 48],
-        [2, 0, 35],
-        [2, 1, 15],
-        [2, 2, 123],
-        [2, 3, 64],
-        [2, 4, 52],
-        [3, 0, 72],
-        [3, 1, 132],
-        [3, 2, 114],
-        [3, 3, 19],
-        [3, 4, 16],
-        [4, 0, 38],
-        [4, 1, 5],
-        [4, 2, 8],
-        [4, 3, 117],
-        [4, 4, 115],
-        [5, 0, 88],
-        [5, 1, 32],
-        [5, 2, 12],
-        [5, 3, 6],
-        [5, 4, 120],
-        [6, 0, 13],
-        [6, 1, 44],
-        [6, 2, 88],
-        [6, 3, 98],
-        [6, 4, 96],
-        [7, 0, 31],
-        [7, 1, 1],
-        [7, 2, 82],
-        [7, 3, 32],
-        [7, 4, 30],
-        [8, 0, 85],
-        [8, 1, 97],
-        [8, 2, 123],
-        [8, 3, 64],
-        [8, 4, 84],
-        [9, 0, 47],
-        [9, 1, 114],
-        [9, 2, 31],
-        [9, 3, 48],
-        [9, 4, 91]
-    ];
     var chartDom = document.getElementById('main2');
-    var myChart = echarts.init(chartDom);
-    var option = {
-        dataset: {
-            source: [
-                ["name1", "name2", "value"],
-                ["Alexander", "Thursday", 24],
-                ["Alexander", "Tuesday", 19],
-                ["Alexander", "Monday", 10],
-                ["Alexander", "Friday", 67],
-                ["Alexander", "Wednesday", 8],
-                ["Leon", "Thursday", 98],
-                ["Leon", "Tuesday", 44],
-                ["Anna", "Monday", 31],
-                ["Anna", "Friday", 30],
-                ["Anna", "Tuesday", 1],
-                ["Leon", "Wednesday", 88],
-                ["Anna", "Wednesday", 82],
-                ["Leon", "Friday", 96],
-                ["Leon", "Monday", 13],
-                ["Anna", "Thursday", 32],
-                ["Maximilian", "Tuesday", 15],
-                ["Maximilian", "Friday", 52],
-                ["Maximilian", "Wednesday", 123],
-                ["Maximilian", "Thursday", 64],
-                ["Maximilian", "Monday", 35],
-                ["Marie", "Thursday", 117],
-                ["Marie", "Friday", 48],
-                ["Marie", "Monday", 92],
-                ["Marie", "Tuesday", 58],
-                ["Marie", "Wednesday", 78],
-                ["Laura", "Wednesday", 31],
-                ["Maria", "Monday", 88],
-                ["Laura", "Friday", 91],
-                ["Laura", "Thursday", 48],
-                ["Laura", "Monday", 47],
-                ["Maria", "Wednesday", 12],
-                ["Maria", "Friday", 120],
-                ["Maria", "Tuesday", 32],
-                ["Maria", "Thursday", 6],
-                ["Laura", "Tuesday", 114],
-                ["Sophia", "Monday", 72],
-                ["Sophia", "Thursday", 19],
-                ["Sophia", "Tuesday", 132],
-                ["Sophia", "Wednesday", 114],
-                ["Sophia", "Friday", 16],
-                ["Tim", "Monday", 85],
-                ["Tim", "Wednesday", 123],
-                ["Tim", "Tuesday", 97],
-                ["Tim", "Friday", 84],
-                ["Tim", "Thursday", 64],
-                ["Lukas", "Friday", 115],
-                ["Lukas", "Wednesday", 8],
-                ["Lukas", "Monday", 38],
-                ["Lukas", "Thursday", 117],
-                ["Lukas", "Tuesday", 5]
-            ]
-        },
-        tooltip: {},
-        visualMap: {
-            min: 3,
-            max: 140,
-            calculable: true,
-            orient: 'horizontal',
-            align: 'right',
-            inRange: {
-                color: ['#BAE7FF', '#1890FF', '#0050B3']
-            },
-            left: 'center'
-        },
-        xAxis: {
-            type: 'category',
-            //data: xAxisData,
-            axisLabel: {
-                color: '#6071A9',
-                fontSize: 4,
-            },
-            splitArea: {
-                show: true
+    var myChart = echarts.init(chartDom, null, { width: 450, height: 300 });
+    let bgColor = '#001037';
+    let title = '总量';
+    let color = ['#38cafb', '#4caff9', '#4adeca', '#2aa7ee', '#0270f2', '#488cf7'];
+    let echartData = lenofstay
+
+    let formatNumber = function (num) {
+        let reg = /(?=(\B)(\d{3})+$)/g;
+        return num.toString().replace(reg, ',');
+    }
+    let total = echartData.reduce((a, b) => {
+        return a + b.value * 1
+    }, 0);
+
+    let option = {
+        backgroundColor: bgColor,
+        color: color,
+        // tooltip: {
+        //     trigger: 'item'
+        // },
+        title: [{
+            text: '{name|' + title + '}\n{val|' + formatNumber(total) + '}',
+            top: 'center',
+            left: 'center',
+            textStyle: {
+                rich: {
+                    name: {
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        color: '#fefefe',
+                        padding: [10, 0]
+                    },
+                    val: {
+                        fontSize: 32,
+                        fontWeight: 'bolder',
+                        color: '#fefefe',
+                    }
+                }
             }
-        },
-        yAxis: {
-            type: 'category',
-            axisLabel: {
-                color: '#6071A9',
-                fontSize: 10,
-                padding: [0, 10, 0, 0],
+        }, {
+            text: '单位：个',
+            top: 20,
+            left: 20,
+            textStyle: {
+                fontSize: 14,
+                color: '#666666',
+                fontWeight: 400
             },
-            splitArea: {
-                show: true
-            }
-        },
-        series: {
-            //name: '热力图',
-            type: 'heatmap',
-            //data: seriesData,
-            label: {
-                show: true
-            },
+            show: false
+        }],
+        series: [{
+            type: 'pie',
+            roseType: 'radius',
+            radius: ['25%', '60%'],
+            center: ['50%', '50%'],
+            data: echartData,
+            hoverAnimation: false,
             itemStyle: {
-                borderWidth: 1,
-                borderColor: "#fff"
-            }
-        }
+                normal: {
+                    borderColor: bgColor,
+                    borderWidth: 2
+                }
+            },
+            labelLine: {
+                normal: {
+                    length: 20,
+                    length2: 120,
+                    lineStyle: {
+                        // color: '#e6e6e6'
+                    }
+                }
+            },
+            label: {
+                normal: {
+                    formatter: params => {
+                        return (
+                            '{icon|●}{name|' + params.name + '}\n{value|' +
+                            formatNumber(params.value) + '}'
+                        );
+                    },
+                    // padding: [0 , -100, 25, -100],
+                    rich: {
+                        icon: {
+                            fontSize: 16,
+                            color: 'inherit'
+                        },
+                        name: {
+                            fontSize: 18,
+                            padding: [0, 0, 0, 10],
+                            color: '#fefefe'
+                        },
+                        value: {
+                            fontSize: 14,
+                            fontWeight: 'bolder',
+                            padding: [10, 0, 0, 20],
+                            color: 'inherit'
+                            // color: '#333333'
+                        }
+                    }
+                }
+            },
+        }]
     };
+
+
     option && myChart.setOption(option);
 }
 
@@ -554,6 +595,7 @@ const initChart4 = async () => {
     // 使用刚指定的配置项和数据显示图表
     option && myChart.setOption(option);
 };
+
 
 const initChart5 = async () => {
     var chartDom = document.getElementById('main4');
@@ -741,8 +783,31 @@ let router = useRouter()
 const back = () => {
     router.back();
 }
-onUnmounted(() => {
-})
+const all_history = ref([])
+const getAllHistory = async () => {
+    await axios.get(`http://127.0.0.1:8080/auth/api/registrations/history/${localStorage.getItem('cur_pid')}`).then((resp) => {
+        console.log('all-history:', resp.data)
+        all_history.value = resp.data
+        for (let i = 0; i < all_history.value.length; i++) {
+            let drugs = []
+            for (let j = 0; j < all_history.value[i].drugs.length; j++) {
+                drugs.push(all_history.value[i].drugs[j].atc.substring(0, 4))
+            }
+            let procedures = []
+            for (let j = 0; j < all_history.value[i].procedures.length; j++) {
+                procedures.push(all_history.value[i].procedures[j].code)
+            }
+            let conditions = []
+            for (let j = 0; j < all_history.value[i].diagnosis.length; j++) {
+                conditions.push(all_history.value[i].diagnosis[j].code)
+            }
+            all_inform.conditions.push(conditions)
+            all_inform.drugs.push(drugs)
+            all_inform.procedures.push(procedures)
+        }
+        console.log(all_inform)
+    })
+}
 </script>
 
 <style scoped>
@@ -811,6 +876,9 @@ onUnmounted(() => {
 }
 
 .heatmap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-left: 0.5em;
     background-image: url('../../assets/screen/(100).png');
     background-size: 100%;

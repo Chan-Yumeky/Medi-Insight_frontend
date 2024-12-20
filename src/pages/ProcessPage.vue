@@ -24,7 +24,7 @@
                 <OutpatientMedicalRecords :sid="props.sid" :pid="pid.toString()"></OutpatientMedicalRecords>
             </div>
             <div v-if="active == 1">
-                <DoctorAdvice></DoctorAdvice>
+                <DoctorAdvice :pid="pid.toString()"></DoctorAdvice>
             </div>
             <div v-if="active == 2">
                 <CompleteComp></CompleteComp>
@@ -42,7 +42,7 @@ import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedical
 import DoctorAdvice from '@/components/ProcessInfo/DoctorAdvice.vue';
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
 const activeName = ref('1')
-const pid = sessionStorage.getItem('cur_pid')
+const pid = localStorage.getItem('cur_pid')
 
 const active = ref(0)
 

@@ -55,11 +55,11 @@ const router = createRouter({
             ]
         },
         {
-            path:'/hyperinsight/:pid',
+            path:'/hyperinsight/:sid',
             name:'hyperinsight',
             component:HyperInsight,
             props: route =>({
-                pid:route.params.pid
+                sid:route.params.sid
             })
         }
     ]

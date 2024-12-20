@@ -20,7 +20,7 @@
                         <PrescriptionComp :pid=props.pid></PrescriptionComp>
                     </div>
                     <div v-if="activeName === '2'">
-                        <MedicalRecordComp :pid="props.pid"></MedicalRecordComp>
+                        <MedicalRecordComp :pid="props.pid" :vid="props.sid"></MedicalRecordComp>
                     </div>
                 </el-main>
             </el-container>
@@ -32,7 +32,6 @@
 import { ref } from 'vue';
 import PrescriptionComp from '../Outpatient/PrescriptionComp.vue';
 import BasicInfo from '../Outpatient/BasicInfo.vue';
-import HyperInsight from '../Outpatient/HyperInsight.vue';
 import MedicalRecordComp from '../Outpatient/MedicalRecordComp.vue';
 import { useRouter } from 'vue-router';
 const props = defineProps({
@@ -44,7 +43,7 @@ let router =  useRouter();
 const changeToHyperInsight = ()=>{
     router.push({
         name: 'hyperinsight',
-        params: { pid: props.pid }
+        params: { sid: props.sid }
     })
 }
 </script>

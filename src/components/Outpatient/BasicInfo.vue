@@ -47,10 +47,9 @@
                 <h3 style="padding:1em 0em;font-weight:400;">过往病史</h3>
                 <el-table :data="history" border style="width: 100%;">
                     <el-table-column prop="id" label="登记号" />
-                    <el-table-column prop="doctorName" label="医生" />
-                    <el-table-column prop="diagnostic" label="诊断" />
+                    <el-table-column prop="doctor.username" label="医生" />
                     <el-table-column prop="source" label="来源" />
-                    <el-table-column prop="department" label="科室" />
+                    <el-table-column prop="doctor.department" label="科室" />
                     <el-table-column prop="bookTime" label="预订时间" />
                     <el-table-column prop="startTime" label="就诊时间" />
                     <el-table-column prop="endTime" label="结束时间" />
@@ -62,9 +61,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div id="chart-1"
-                    style="height: 30em;width:100%; display: flex;justify-content: center;align-items: center;">
-                </div>
             </div>
         </Transition>
     </div>
@@ -88,7 +84,6 @@ onMounted(async () => {
     if (ubchart) {
         ubchart.removeAttribute('_echarts_instance_');
     }
-    await initChart1()
 })
 
 const userInfo = ref({
@@ -116,30 +111,11 @@ const getHistory = async () => {
         for (let i = 0; i < history.value.length; i++) {
             history.value[i].source = mapSource(history.value[i].source)
         }
-        console.log(history.value)
+        console.log('history:',history.value)
     })
 }
 
-import * as echarts from 'echarts';
 
-const initChart1 = async () => {
-    const chart = echarts.init(document.getElementById("chart-1"), "light");
-    chart.setOption({
-        xAxis: {
-            type: 'category',
-            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                data: [120, 200, 150, 80, 70, 110, 130, 10, 10, 10, 12, 11],
-                type: 'bar'
-            }
-        ]
-    })
-}
 </script>
 
 <style lang="css" scoped>
