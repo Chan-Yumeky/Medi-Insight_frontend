@@ -14,26 +14,34 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { getSessionId } from '@/utils/utils';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import { ref,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-
+const props = defineProps({
+    sid: { type: String, required: true }
+})
 let dialogVisible = ref(false)
-const all_message = {'id':localStorage.getItem('cur_pid'),
-    'prescription':localStorage.getItem(`diagnosis_${localStorage.cur_pid}`),
-    'drug':localStorage.getItem(`drug_${localStorage.cur_pid}`),
-    'procedure':localStorage.getItem(`procedure_${localStorage.cur_pid}`),
+const all_message = {'id':props.sid,
+    'did':getSessionId(),
+    'diagnosis':JSON.parse(localStorage.getItem(`diagnosis_${localStorage.cur_pid}`)),
+    'drug':JSON.parse(localStorage.getItem(`drug_${localStorage.cur_pid}`)),
+    'procedure':JSON.parse(localStorage.getItem(`procedure_${localStorage.cur_pid}`)),
 }
 onMounted(()=>{
     dialogVisible.value=true;
     console.log(all_message)
 })
 const router = useRouter()
-const finishMeeting = ()=>{
-    axios.post('/api/registrations/record').then((resp)=>{
+const finishMeeting = async()=>{
+    await axios.post('/auth/api/medical/save',all_message).then((resp)=>{
         if(resp.status==200){
             console.log(resp.data)
+            localStorage.removeItem(`diagnosis_${localStorage.cur_pid}`)
+            localStorage.removeItem(`drug_${localStorage.cur_pid}`)
+            localStorage.removeItem(`procedure_${localStorage.cur_pid}`)
+            localStorage.removeItem('cur_pid')
         }
     })
     router.push({

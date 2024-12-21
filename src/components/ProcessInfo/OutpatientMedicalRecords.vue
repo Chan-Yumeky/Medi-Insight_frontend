@@ -38,6 +38,7 @@ const props = defineProps({
     sid: { type: String, required: true },
     pid: { type: String, required: true }
 });
+console.log('ppid:',props.pid)
 let activeName = ref('0')
 let router =  useRouter();
 const changeToHyperInsight = ()=>{

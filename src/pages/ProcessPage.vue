@@ -30,7 +30,7 @@
                 <DoctorAdvice :pid="pid.toString()"></DoctorAdvice>
             </div>
             <div v-if="active == 2">
-                <CompleteComp></CompleteComp>
+                <CompleteComp :sid="props.sid"></CompleteComp>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@ import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 const activeName = ref('1')
 const pid = localStorage.getItem('cur_pid')
-
+console.log('pid:',pid)
 const active = ref(0)
 
 const next = () => {

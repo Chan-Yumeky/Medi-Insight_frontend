@@ -39,8 +39,8 @@ let patientList = ref()
 const router = useRouter()
 const handleClick = (sid: any, pid: any) => {
     console.log(sid, pid)
-    router.push({ name: 'process', params: { sid: sid } });
     localStorage.setItem('cur_pid', pid)
+    router.push({ name: 'process', params: { sid: sid } });
 }
 
 onMounted(async () => {

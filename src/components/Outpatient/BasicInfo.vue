@@ -139,7 +139,7 @@ const handleClick = (row) => {
         if (history.value[i].id == row) {
             medicalRecord.value = {
                 condition: history.value[i].diagnosis,
-                procedure: history.value[i].procedure,
+                procedure: history.value[i].procedures,
                 drugs: history.value[i].drugs
             }
         }
