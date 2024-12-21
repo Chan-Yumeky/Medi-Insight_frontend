@@ -1,14 +1,14 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" style="overflow: hidden">
     <div class="container">
       <!-- 顶部区域，轮播图和图表区域各占1/2 -->
       <div class="top-row">
         <!-- 轮播图区域 -->
         <Transition name="slide-fade">
           <div v-if="isshow" class="carousel-container">
-            <el-carousel trigger="click" height="150px" arrow="never" indicator-position="inside">
-              <el-carousel-item v-for="item in 4" :key="item">
-                <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+            <el-carousel trigger="click" height="400px" arrow="never" indicator-position="inside">
+              <el-carousel-item v-for="(item, index) in images" :key="index">
+                <img :src="item" alt="Carousel Image" class="carousel-image" />
               </el-carousel-item>
             </el-carousel>
           </div>
@@ -61,6 +61,13 @@
 import { onMounted, ref } from 'vue';
 let isshow = ref(false);
 
+const images = ref([
+  'src/assets/VCG41N1480946605.webp',  // 替换为你的图片路径
+  'src/assets/VCG41N1480946811.webp',
+  'src/assets/VCG41N2149354382.webp',
+  'src/assets/VCG211382243422.webp',
+  'src/assets/VCG211450049310.webp',
+]);
 onMounted(async () => {
   isshow.value = true;
   const ubchart = document.getElementById("chart");
@@ -232,8 +239,10 @@ const initChart1 = async () => {
 </script>
 
 <style scoped>
+
 .wrapper {
   width: 100%;
+  overflow: hidden; /* 去除滚动条 */
 }
 
 .container {
