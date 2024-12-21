@@ -12,10 +12,13 @@
                         <ArrowLeft />
                     </el-icon>
                 </el-button>
-                <el-button style="margin-right: 0.5em;height: 1.8em; width: 1.8em;" @click="next()" circle>
+                <el-button style="height: 1.8em; width: 1.8em;" @click="next()" circle>
                     <el-icon :size="17">
                         <ArrowRight />
                     </el-icon>
+                </el-button>
+                <el-button style="margin-right: 0.5em;height: 1.8em; width: 1.8em;" @click="cancel()" circle type="danger">
+                    <p>x</p>
                 </el-button>
             </div>
         </header>
@@ -41,6 +44,7 @@ import CompleteComp from '@/components/ProcessInfo/CompleteComp.vue';
 import OutpatientMedicalRecords from '@/components/ProcessInfo/OutpatientMedicalRecords.vue';
 import DoctorAdvice from '@/components/ProcessInfo/DoctorAdvice.vue';
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 const activeName = ref('1')
 const pid = localStorage.getItem('cur_pid')
 
@@ -53,6 +57,10 @@ const next = () => {
 const back = () => {
     if (active.value-- < 1) active.value = 0
     activeName.value = (active.value - 1).toString()
+}
+const router = useRouter()
+const cancel =()=>{
+    router.back()
 }
 </script>
 <style lang="css" scoped>

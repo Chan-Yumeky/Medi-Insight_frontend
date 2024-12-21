@@ -6,7 +6,7 @@
         <!-- 轮播图区域 -->
         <Transition name="slide-fade">
           <div v-if="isshow" class="carousel-container">
-            <el-carousel trigger="click" height="400px" arrow="never" indicator-position="inside">
+            <el-carousel trigger="click" height="330px" arrow="never" indicator-position="inside">
               <el-carousel-item v-for="(item, index) in images" :key="index">
                 <img :src="item" alt="Carousel Image" class="carousel-image" />
               </el-carousel-item>
@@ -28,27 +28,18 @@
       <Transition name="slide-fade">
         <div v-if="isshow">
           <div class="main-title">
-            <h1>Explore</h1>
-            <p>do what you want</p>
+            <h1>功能列表</h1>
           </div>
           <div class="item-row">
-            <div class="sub-title">
-              <h3>U1</h3>
-            </div>
             <div class="itemline">
-              <div class="item"></div>
-              <div class="item"></div>
-              <div class="item"></div>
-              <div class="item"></div>
-            </div>
-          </div>
-          <div class="item-row">
-            <div class="sub-title">
-              <h3>U2</h3>
-            </div>
-            <div class="itemline">
-              <div class="item"></div>
-              <div class="item"></div>
+              <div class="item" @click="changeToAttendancePage">
+                <img src="../assets/医生.svg" alt="" style="width: 50%; height: 50%;">
+                <h2>接诊</h2>
+              </div>
+              <div class="item">
+                <img src="../assets/loading.svg" alt="" style="width: 40%; height: 40%;">
+                <h2 style="font-size: 1.1em;margin-top: 1em;">更多功能正在开发中</h2>
+              </div>
             </div>
           </div>
         </div>
@@ -77,9 +68,16 @@ onMounted(async () => {
   await initChart1();
   console.log(document.getElementById("chart"));
 });
+const router = useRouter()
+const changeToAttendancePage = ()=>{
+  router.push({
+    name:'attendance'
+  })
+}
 
 import * as echarts from "echarts";
 import axios from "axios";
+import { useRouter } from 'vue-router';
 
 const initChart1 = async () => {
   const chart = echarts.init(document.getElementById("chart"), "light");
@@ -200,7 +198,7 @@ const initChart1 = async () => {
         type: 'pie',
         radius: ['50%', '70%'], // 环形内外半径
         center: ['50%', '50%'], // 圆心居中
-        data: data ? [{ value: data.totalPatients, name: '患者人数' , itemStyle: { color: '#ebeafc' },}] : [{ value: 1000, name: '患者人数' , itemStyle: { color: '#ebeafc' },}],
+        data: data ? [{ value: data.totalPatients, name: '患者人数', itemStyle: { color: '#ebeafc' }, }] : [{ value: 1000, name: '患者人数', itemStyle: { color: '#ebeafc' }, }],
         labelLine: { show: false }, // 隐藏连接线
         label: { show: false }, // 隐藏标签
       },
@@ -208,7 +206,7 @@ const initChart1 = async () => {
         type: 'pie',
         radius: ['0%', '50%'], // 内半径为 0，外半径为 50%
         center: ['50%', '50%'],
-        data: data ? [{ value: data.totalPatients, name: '患者人数' , itemStyle: { color: '#e3e4f9' },}] : [{ value: 1000, name: '患者人数', itemStyle: { color: '#e3e4f9' },}],
+        data: data ? [{ value: data.totalPatients, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }] : [{ value: 1000, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }],
         labelLine: { show: false }, // 隐藏连接线
         label: {
           show: true,
@@ -239,14 +237,15 @@ const initChart1 = async () => {
 </script>
 
 <style scoped>
-
 .wrapper {
   width: 100%;
-  overflow: hidden; /* 去除滚动条 */
+  overflow: hidden;
+  /* 去除滚动条 */
 }
 
 .container {
-  height: 100vh; /* 总高度为100vh */
+  height: 100vh;
+  /* 总高度为100vh */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -256,21 +255,25 @@ const initChart1 = async () => {
 .top-row {
   display: flex;
   width: 100%;
-  height: 50vh; /* 顶部区域占1/3 */
+  height: 50vh;
+  /* 顶部区域占1/3 */
 }
 
 .carousel-container {
   width: 50%;
-  height: 100%;
-  padding: 1rem;
+  height: 50%;
+  padding: 0.5em 1rem;
   box-sizing: border-box;
 }
 
 .echarts {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 两列 */
-  grid-template-rows: repeat(2, 1fr); /* 两行 */
-  gap: 1rem; /* 图表之间的间隔 */
+  grid-template-columns: repeat(2, 1fr);
+  /* 两列 */
+  grid-template-rows: repeat(2, 1fr);
+  /* 两行 */
+  gap: 1rem;
+  /* 图表之间的间隔 */
   width: 50%;
   height: 100%;
   padding: 1rem;
@@ -285,7 +288,7 @@ const initChart1 = async () => {
 
 .main-title {
   width: 100%;
-  height: 9em;
+  height: 4em;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -337,9 +340,15 @@ p {
 .item {
   border-radius: 5px;
   height: 100%;
-  width: 12em;
+  width: 14em;
   margin-right: 1.5em;
-  background-color: aquamarine;
+  background-color: white;
+  box-shadow: 2px 2px 6px #ccc;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  color: #333
 }
 
 .item:hover {

@@ -61,6 +61,20 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-dialog v-model="dialogVisible" title="病历详情" style="height: 30em; width: 25em;">
+                    <h2 style="margin-bottom: 0.5em;">诊断</h2>
+                    <p v-for="item in medicalRecord.condition" :key="item">
+                        {{ item.name }} {{ item.code }}
+                    </p>
+                    <h2 style="margin-bottom: 0.5em;margin-top: 0.5em;">检查</h2>
+                    <p v-for="item in medicalRecord.procedure" :key="item">
+                        {{ item.name }} {{ item.code }}
+                    </p>
+                    <h2 style="margin-bottom: 0.5em;margin-top: 0.5em;">药物</h2>
+                    <p v-for="item in medicalRecord.drugs" :key="item">
+                        {{ item.name }} {{ item.atc }}
+                    </p>
+                </el-dialog>
             </div>
         </Transition>
     </div>
@@ -85,6 +99,7 @@ onMounted(async () => {
         ubchart.removeAttribute('_echarts_instance_');
     }
 })
+
 
 const userInfo = ref({
     username: '',
@@ -111,10 +126,26 @@ const getHistory = async () => {
         for (let i = 0; i < history.value.length; i++) {
             history.value[i].source = mapSource(history.value[i].source)
         }
-        console.log('history:',history.value)
+        console.log('history:', history.value)
     })
 }
 
+const dialogVisible = ref(false); // 控制弹窗显示与隐藏
+const medicalRecord = ref(); // 用于存储病历数据
+const handleClick = (row) => {
+    dialogVisible.value = true
+    console.log(row.diagnosis)
+    for (let i = 0; i < history.value.length; i++) {
+        if (history.value[i].id == row) {
+            medicalRecord.value = {
+                condition: history.value[i].diagnosis,
+                procedure: history.value[i].procedure,
+                drugs: history.value[i].drugs
+            }
+        }
+    }
+    console.log(medicalRecord.value)
+}
 
 </script>
 
@@ -133,5 +164,4 @@ const getHistory = async () => {
     padding: 0 1em;
     background: linear-gradient(to top, #faf9ff, #faf9ff, #faf9ff, white, white);
 }
-
 </style>

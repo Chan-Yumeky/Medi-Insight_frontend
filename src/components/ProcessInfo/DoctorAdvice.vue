@@ -2,105 +2,111 @@
     <div style="padding: 1em; background-color: white; height: calc(100vh - 7.2em); overflow-y: scroll;">
         <Transition name="slide-fade">
             <div v-if="isshow">
-                <!-- 药物部分 -->
-                <h3 style="padding: 1em 0;">药物部分</h3>
-                <div class="drug-frame">
-                    <el-button type="danger" @click="clearAllRows" style="margin-bottom: 0.5em;">
-                        清空所有医嘱
-                    </el-button>
+                <el-tabs type="border-card">
+                    <el-tab-pane label="药物">
+                        <div class="drug-frame">
+                            <el-button type="danger" @click="clearAllRows" style="margin-bottom: 0.5em;">
+                                清空所有医嘱
+                            </el-button>
 
-                    <el-button type="primary" @click="addAdviceRow" style="margin-bottom: 0.5em;">添加医嘱</el-button>
-                    <el-button @click="saveDrugData" style="margin-bottom: 0.5em;">保存</el-button>
-                    <el-table :data="rows" border style="width: 100%" ref="table" :row-key="row => row.adviceName">
-                        <el-table-column label="医嘱项" prop="adviceName" width="100"></el-table-column>
-                        <el-table-column label="药物名">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.drug" :fetch-suggestions="fetchSuggestions"
-                                    @select="(selected) => onDrugSelected(row, selected)" placeholder="请输入医嘱内容"
-                                    class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="开始日期">
-                            <template #default="{ row }">
-                                <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="结束日期">
-                            <template #default="{ row }">
-                                <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="ATC码">
-                            <template #default="{ row }">
-                                <el-input v-model="row.ndcCode" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="计量值">
-                            <template #default="{ row }">
-                                <el-input v-model="row.dosage"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="计量单位">
-                            <template #default="{ row }">
-                                <el-input v-model="row.dosageUnit"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="形式">
-                            <template #default="{ row }">
-                                <el-input v-model="row.dosageForm"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template #default="{ row, $index }">
-                                <el-button @click="removeAdviceRow($index)" type="danger" size="small">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
+                            <el-button type="primary" @click="addAdviceRow"
+                                style="margin-bottom: 0.5em;">添加医嘱</el-button>
+                            <el-button @click="saveDrugData" style="margin-bottom: 0.5em;">保存</el-button>
+                            <el-table :data="rows" border style="width: 100%" ref="table"
+                                :row-key="row => row.adviceName">
+                                <el-table-column label="医嘱项" prop="adviceName" width="100"></el-table-column>
+                                <el-table-column label="药物名">
+                                    <template #default="{ row }">
+                                        <el-autocomplete v-model="row.drug" :fetch-suggestions="fetchSuggestions"
+                                            @select="(selected) => onDrugSelected(row, selected)" placeholder="请输入医嘱内容"
+                                            class="autocomplete-input" :style="{ width: '100%' }">
+                                        </el-autocomplete>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="开始日期">
+                                    <template #default="{ row }">
+                                        <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="结束日期">
+                                    <template #default="{ row }">
+                                        <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="ATC码">
+                                    <template #default="{ row }">
+                                        <el-input v-model="row.ndcCode" disabled></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="计量值">
+                                    <template #default="{ row }">
+                                        <el-input v-model="row.dosage"></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="计量单位">
+                                    <template #default="{ row }">
+                                        <el-input v-model="row.dosageUnit"></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="形式">
+                                    <template #default="{ row }">
+                                        <el-input v-model="row.dosageForm"></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作">
+                                    <template #default="{ row, $index }">
+                                        <el-button @click="removeAdviceRow($index)" type="danger"
+                                            size="small">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="检查">
+                        <div class="procedure-frame">
+                            <el-button type="danger" @click="clearAllProcedureRows" style="margin-bottom: 0.5em;">
+                                清空所有检查项
+                            </el-button>
 
-                <!-- 检查部分 (Frame) -->
-                <h3 style="padding: 1em 0;">检查部分</h3>
-                <div class="procedure-frame">
-                    <el-button type="danger" @click="clearAllRows" style="margin-bottom: 0.5em;">
-                        清空所有检查项
-                    </el-button>
-
-                    <el-button type="primary" @click="addProcedureRow" style="margin-bottom: 0.5em;">添加检查项</el-button>
-                    <el-button @click="saveProcedureData" style="margin-bottom: 0.5em;">保存</el-button>
-                    <el-table :data="procedureRows" border style="width: 100%" ref="table"
-                        :row-key="row => row.procedureName">
-                        <el-table-column label="检查项" prop="procedureName" width="100"></el-table-column>
-                        <el-table-column label="检查内容">
-                            <template #default="{ row }">
-                                <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions1"
-                                    @select="(selected) => onProcedureSelected(row, selected)" placeholder="请输入检查内容"
-                                    class="autocomplete-input" :style="{ width: '100%' }">
-                                </el-autocomplete>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="开始日期">
-                            <template #default="{ row }">
-                                <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="结束日期">
-                            <template #default="{ row }">
-                                <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="编码">
-                            <template #default="{ row }">
-                                <el-input v-model="row.procedureCode" disabled></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template #default="{ row, $index }">
-                                <el-button @click="removeProcedureRow($index)" type="danger" size="small">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
+                            <el-button type="primary" @click="addProcedureRow"
+                                style="margin-bottom: 0.5em;">添加检查项</el-button>
+                            <el-button @click="saveProcedureData" style="margin-bottom: 0.5em;">保存</el-button>
+                            <el-table :data="procedureRows" border style="width: 100%" ref="table"
+                                :row-key="row => row.procedureName">
+                                <el-table-column label="检查项" prop="procedureName" width="100"></el-table-column>
+                                <el-table-column label="检查内容">
+                                    <template #default="{ row }">
+                                        <el-autocomplete v-model="row.procedure" :fetch-suggestions="fetchSuggestions1"
+                                            @select="(selected) => onProcedureSelected(row, selected)"
+                                            placeholder="请输入检查内容" class="autocomplete-input" :style="{ width: '100%' }">
+                                        </el-autocomplete>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="开始日期">
+                                    <template #default="{ row }">
+                                        <el-date-picker v-model="row.startDate" style="width: 100%;"> </el-date-picker>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="结束日期">
+                                    <template #default="{ row }">
+                                        <el-date-picker v-model="row.endDate" style="width: 100%;"> </el-date-picker>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="编码">
+                                    <template #default="{ row }">
+                                        <el-input v-model="row.procedureCode" disabled></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作">
+                                    <template #default="{ row, $index }">
+                                        <el-button @click="removeProcedureRow($index)" type="danger"
+                                            size="small">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
             </div>
         </Transition>
     </div>
@@ -174,7 +180,7 @@ const AdviceContentList = ref([
 ]);
 
 const addAdviceRow = () => {
-    const newRow = { adviceName: `${rows.value.length + 1}`};
+    const newRow = { adviceName: `${rows.value.length + 1}` };
     rows.value.push(newRow);
 };
 
@@ -191,7 +197,7 @@ const procedureRows = ref([
 ]);
 
 const addProcedureRow = () => {
-    const newRow = { procedureName: `${procedureRows.value.length + 1}`};
+    const newRow = { procedureName: `${procedureRows.value.length + 1}` };
     procedureRows.value.push(newRow);
 };
 
@@ -246,6 +252,14 @@ const saveProcedureData = () => {
     localStorage.setItem(`procedure_${props.pid}`, JSON.stringify(procedureRows.value));
     console.log(localStorage.getItem(`procedure_${props.pid}`))
 };
+
+const clearAllRows = () => {
+    rows.value = [];
+};
+
+const clearAllProcedureRows = ()=>{
+    procedureRows.value = [];
+}
 </script>
 
 <style scoped>
@@ -259,7 +273,6 @@ const saveProcedureData = () => {
 
 .drug-frame,
 .procedure-frame {
-    height: 45vh;
     overflow-y: scroll;
 }
 
