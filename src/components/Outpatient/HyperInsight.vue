@@ -83,7 +83,9 @@ onMounted(async () => {
     progress.value += 15
     await getLenOfStay();
     progress.value += 15
-    // await getDrugRecommendation();
+    await fetchDrugNames()
+    await getDrugRecommendation();
+    progress.value += 15
     await initChart1();
     await initChart2();
     await initChart3();
@@ -106,6 +108,7 @@ const all_inform = {
 let mortality = 0.16;
 let readmission = 0.39;
 let lenofstay = [];
+let drugrec = []
 const getMortality = async () => {
     await axios.post('http://127.0.0.1:5002/api/predict/mortality', [all_inform])
         .then((resp) => {
@@ -134,7 +137,7 @@ const getReadmission = async () => {
         });
 }
 
-const len_names = ['少于1天', '1天', '2天', '3天', '4天', '5天', '6天', '7天', '大于一周小于两周', '超过两周']
+const len_names = ['少于1天', '1天', '2天', '3天', '4天', '5天', '6天', '7天', '1.5周', '超过两周']
 const getLenOfStay = async () => {
     await axios.post('http://127.0.0.1:5002/api/predict/lenofstay', [all_inform])
         .then((resp) => {
@@ -143,7 +146,7 @@ const getLenOfStay = async () => {
             const temp = resp.data.lenofstay;
             for (let i = 0; i < temp.length; i++) {
                 lenofstay.push({
-                    value: temp[i],
+                    value: temp[i].toFixed(3),
                     name: len_names[i]
                 })
             }
@@ -151,6 +154,45 @@ const getLenOfStay = async () => {
         })
         .catch((error) => {
             // 错误处理
+            console.error("Error fetching data:", error);
+        });
+}
+
+let drugnames = []
+const fetchDrugNames = async () => {
+    const response = await fetch('/trans_father.json');  // 读取 JSON 文件
+    const data = await response.json();  // 解析 JSON 数据
+
+    drugnames = data.map(item => ({
+        code: item.code,
+        name: item.name,
+        cn_name: item.cn_name
+    }));
+
+    console.log(drugnames);  // 打印提取的数据
+};
+const getDrugRecommendation = async () => {
+    await axios.post('http://127.0.0.1:5002/api/predict/drugrec', [all_inform])
+        .then((resp) => {
+            console.log(resp.data.drugrec)
+            const temp = resp.data.drugrec;
+            const tempWithIndex = temp.map((value, index) => ({ value, index }));
+            tempWithIndex.sort((a, b) => b.value - a.value);
+            console.log('tempwithindex:', tempWithIndex)
+            const matched = tempWithIndex.map((item) => {
+                const matchingDrugName = drugnames[item.index];
+                return {
+                    drugRecValue: item.value,  // 排序后的浮点数值
+                    ...matchingDrugName  // 配对的 drugnames 数据
+                };
+            });
+            drugrec = matched.slice(0, 3).map(item => ({
+                name: item.cn_name,
+                value: item.drugRecValue.toFixed(3)
+            }));
+            console.log('drugrec:', drugrec);
+        })
+        .catch((error) => {
             console.error("Error fetching data:", error);
         });
 }
@@ -432,36 +474,32 @@ const initChart3 = async () => {
     }, 0);
 
     let option = {
-        backgroundColor: bgColor,
+        backgroundColor: '',
         color: color,
-        // tooltip: {
-        //     trigger: 'item'
-        // },
         title: [{
-            text: '{name|' + title + '}\n{val|' + formatNumber(total) + '}',
             top: 'center',
             left: 'center',
             textStyle: {
                 rich: {
                     name: {
-                        fontSize: 14,
+                        fontSize: 12,  // 改小字体大小
                         fontWeight: 'normal',
                         color: '#fefefe',
                         padding: [10, 0]
                     },
                     val: {
-                        fontSize: 32,
+                        fontSize: 28,  // 改小字体大小
                         fontWeight: 'bolder',
                         color: '#fefefe',
                     }
                 }
             }
         }, {
-            text: '单位：个',
+            text: '',
             top: 20,
             left: 20,
             textStyle: {
-                fontSize: 14,
+                fontSize: 5,  // 改小字体大小
                 color: '#666666',
                 fontWeight: 400
             },
@@ -482,8 +520,8 @@ const initChart3 = async () => {
             },
             labelLine: {
                 normal: {
-                    length: 20,
-                    length2: 120,
+                    length: 10,  // 缩短线条长度
+                    length2: 60,  // 缩短线条长度
                     lineStyle: {
                         // color: '#e6e6e6'
                     }
@@ -497,29 +535,28 @@ const initChart3 = async () => {
                             formatNumber(params.value) + '}'
                         );
                     },
-                    // padding: [0 , -100, 25, -100],
                     rich: {
                         icon: {
-                            fontSize: 16,
+                            fontSize: 10,  // 改小字体大小
                             color: 'inherit'
                         },
                         name: {
-                            fontSize: 18,
+                            fontSize: 12,  // 改小字体大小
                             padding: [0, 0, 0, 10],
                             color: '#fefefe'
                         },
                         value: {
-                            fontSize: 14,
+                            fontSize: 10,  // 改小字体大小
                             fontWeight: 'bolder',
                             padding: [10, 0, 0, 20],
                             color: 'inherit'
-                            // color: '#333333'
                         }
                     }
                 }
             },
         }]
     };
+
 
 
     option && myChart.setOption(option);
@@ -600,181 +637,215 @@ const initChart4 = async () => {
 const initChart5 = async () => {
     var chartDom = document.getElementById('main4');
     var myChart = echarts.init(chartDom);
-    var data = [{
-        name: "头孢",
-        value: 175.17
-    },
-    {
-        name: "阿司匹林",
-        value: 148.35
-    },
-    {
-        name: "诺氟沙星",
-        value: 95.36
-    }
-    ];
-    var xAxisData = [];
-    var seriesData1 = [];
-    let sum = 0;
-    let barTopColor = ["#02c3f1", "#53e568", "#a154e9"];
-    let barBottomColor = ["rgba(2,195,241,0.1)", "rgba(83, 229, 104, 0.1)", "rgba(161, 84, 233, 0.1)"];
-    data.forEach(item => {
-        xAxisData.push(item.name);
-        seriesData1.push(item.value);
-        sum += item.value;
-    });
+    const dataSource = drugrec
+
     var option = {
         backgroundColor: '',
-        title: {
-            text: '药品推荐',
-            top: 10,
-            left: 'center',
-            textStyle: {
-                color: '#fff',
-                fontSize: 16
-            }
+        tooltip: {
+            trigger: "axis",
         },
         grid: {
-            top: '25%',
-            bottom: '15%'
+            containLabel: true,
+            left: "4%",
+            right: "5%",
+            bottom: "2%",
+            top: '30',
         },
-        xAxis: {
-            data: xAxisData,
-            axisTick: {
-                show: false
-            },
-            axisLine: {
-                show: false
-            },
-            axisLabel: {
-                show: true,
-                margin: 11,
-                align: 'center',
-                // rotate: 45,
-                formatter: function (params, index) {
-                    return '{a|' + (seriesData1[index] / sum * 100).toFixed(2) + '%}' + '\n' + '{b|' + params + '}';
-                },
+        dataZoom: [ //滚动条
+            {
+                show: dataSource.length > 4 ? true : false,
+                type: 'slider',
+                realtime: true,
+                startValue: 0,
+                endValue: 4,
+                yAxisIndex: [0],
+                top: '0%',
+                left: '0',
+                width: 0,
+                // height: "70%",
+                handleSize: 5,
+                borderColor: 'rgba(0,0,0,0)',
                 textStyle: {
-                    fontSize: 10,
-                    color: '#ffffff',
-                    rich: {
-                        a: {
-                            fontSize: 12,
-                            color: '#ffffff'
-                        },
-                        b: {
-                            height: 20,
-                            fontSize: 14,
-                            color: '#ffffff'
-                        }
-                    }
+                    color: 'transparent',
+                    show: false
+                },
+                // filterMode: 'filter',
+                // filterMode: "empty",
+                showDetail: false,
+                zoomLock: true
+            },
+        ],
+        xAxis: {
+            name: '',
+            show: true,
+            type: 'value',
+            splitLine: {
+                show: false,
+                lineStyle: {
+                    color: "#61738C",
+                    type: "dashed"
                 }
             },
-            interval: 0
-        },
-        yAxis: {
-            splitLine: {
-                show: false
-            },
-            axisTick: {
-                show: false
+            axisLabel: {
+                textStyle: {
+                    color: "#b3c7c9",
+                    fontSize: 12
+                },
             },
             axisLine: {
-                show: false
+                show: true, //不显示x轴
+                lineStyle: {
+                    color: "#15588b"
+                }
             },
-            axisLabel: {
-                show: false
+            axisTick: {
+                show: false //不显示刻度
             }
         },
+        yAxis: [{
+            // name: "三方",
+            type: 'category',
+            inverse: true,
+            axisLabel: {
+                margin: 10,
+                color: '#b3c7c9',
+                fontWeight: 400,
+                fontSize: 12,
+                interval: 0,
+                formatter: function (value) {
+                    let str = "";
+                    let num = 4; //每行显示字数
+                    let valLength = value.length; //该项x轴字数
+                    let rowNum = Math.ceil(valLength / num); // 行数
+                    if (rowNum > 1) {
+                        for (let i = 0; i < rowNum; i++) {
+                            let temp = "";
+                            let start = i * num;
+                            let end = start + num;
+                            temp = value.substring(start, end) + "";
+                            str += temp;
+                        }
+                        return str;
+                    } else {
+                        return value;
+                    }
+                },
+            },
+            splitLine: {
+                show: false,
+                lineStyle: {
+                    color: "#61738C",
+                    type: "dashed"
+                }
+            },
+            axisLine: {
+                show: true, //不显示x轴
+                lineStyle: {
+                    color: "#15588b"
+                }
+            },
+            axisTick: {
+                show: false //不显示刻度
+            },
+            data: dataSource.map((item) => item.name),
+        }],
         series: [{
-            name: '柱顶部',
-            type: 'pictorialBar',
-            symbolSize: [26, 10],
-            symbolOffset: [0, -3],
-            z: 12,
-            itemStyle: {
-                normal: {
-                    color: function (params) {
-                        return barTopColor[params.dataIndex];
-                    }
-                }
-            },
-            label: {
-                show: true,
-                position: 'top',
-                fontSize: 16
-            },
-            symbolPosition: 'end',
-            data: seriesData1,
-        }, {
-            name: '柱底部',
-            type: 'effectScatter',
-            symbolSize: [26, 10],
-            symbolOffset: [0, 3],
-            z: 12,
-            itemStyle: {
-                normal: {
-                    color: function (params) {
-                        return barTopColor[params.dataIndex];
-                    }
-                }
-            },
-            data: [3, 3, 3]
-        }, {
-            name: '第一圈',
-            type: 'pictorialBar',
-            symbolSize: [46, 16],
-            symbolOffset: [0, 11],
-            z: 11,
-            itemStyle: {
-                normal: {
-                    color: 'transparent',
-                    borderColor: '#3ACDC5',
-                    borderWidth: 2
-                }
-            },
-            data: seriesData1
-        }, {
-            name: '第二圈',
-            type: 'pictorialBar',
-            symbolSize: [62, 22],
-            symbolOffset: [0, 17],
-            z: 10,
-            itemStyle: {
-                normal: {
-                    color: 'transparent',
-                    borderColor: barTopColor[0],
-                    borderWidth: 2
-                }
-            },
-            data: seriesData1
-        }, {
             type: 'bar',
+            // showBackground: true,
+            barMinWidth: '10',
+            backgroundStyle: {
+                opacity: 1,
+                color: '#1f4365',
+            },
+            yAxisIndex: 0,
+            data: dataSource.map((item) => item.value),
+            barWidth: 20,
+            // align: left,
+            stack: "2",
             itemStyle: {
                 normal: {
-                    color: function (params) {
-                        return new echarts.graphic.LinearGradient(
-                            0, 0, 0, 1,
-                            [{
-                                offset: 1,
-                                color: barTopColor[params.dataIndex]
-                            },
-                            {
-                                offset: 0,
-                                color: barBottomColor[params.dataIndex]
-                            }
-                            ]
-                        );
+                    //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                        offset: 0,
+                        color: "#00d5fc",
                     },
-                    opacity: 0.8
+                    {
+                        offset: 1,
+                        color: "#1280eb",
+                    },
+                    ]),
+                },
+            },
+            markLine: {
+                symbol: 'none', //去掉箭头
+                data: [{
+                    type: 'average',
+                    name: '平均数'
+                }],
+                label: {
+                    position: 'start',
+                    // formatter:'{c}%',
+                    formatter: ({
+                        name
+                    }) => {
+                        return `{a|${'平均数'}}`
+                    },
+                    align: 'center',
+                    rich: {
+                        a: {
+                            // height: 30,
+                            color: '#fff',
+                            backgroundColor: "#00a8ff",
+                            padding: [6, 8],
+                            // margin: [0,0,'-10',0],
+                            borderColor: '#7cd1e0',
+                            borderWidth: 0,
+                            borderRadius: 10
+                        },
+                    },
+                },
+                lineStyle: {
+                    color: '#00a8ff'
                 }
             },
-            z: 16,
-            silent: true,
-            barWidth: 26,
-            barGap: '-100%', // Make series be overlap
-            data: seriesData1
-        }]
+        },
+        // {
+        //     z:1,
+        //     type: 'pictorialBar',
+        //     symbolPosition:'end',
+        //     symbolRotate:'0',
+        //     symbolSize: [10,20],
+        //     // color:'rgb(4,128,224)',
+        //     data: dataSource.map((item) => item.value),
+        //     symbol: 'roundRect',
+        //     symbolOffset: ['52%',0],
+        //     itemStyle: {
+        //         color: 'white',
+        //         shadowColor: 'rgba(29,255,252, 0.8)',
+        //         shadowBlur: 10,
+        //     },
+        // },
+        {
+            type: 'pictorialBar',
+            data: dataSource.map((item) => item.value),
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            zlevel: 99,
+            symbol: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAOCAYAAADE84fzAAAAAXNSR0IArs4c6QAAA/ZJREFUOE9t1G2IVFUYB/DnvN6XmXvPvXNn5npnZ3Ze2HVdJKgQCSRsKQqVitqwggKVYCRKCiSiT/M1KgLFtRXaYAVNdkEzKKJIvwgWKNvuGpLprK7Ovrq6r7Mzd+bcGHVXU8/H58PveQ7n+R8Ejzkvd5einqPvbI2ra0x9uSu/wboMABjgOQxwug4Awd7eX0JRzlpk2a+E5+vFPXu2Vh6m0MOFts+njGQM3s4Jurc1qtgGKh8+duTQvtMn+yeBGxxqlUriqSfQjldfyZm6lq3XpWQ4+EcsFEfy+bz/oPd//JOLRsoVna2CftAaYe05i2hJm8+WZ0b79n9zsPevcwOTpmkFL23bbLel0hFFUylgoBiwjyS65CxbxXx+w2qD+3hhMkxQ9bWMwXa3WLh1bYQJzyA4HeEkKchi8dLwr190fXuiXKn669e1Us+x5oUQSyFdx0Sh6kqDqjYzUti+vdq4wV1810UDLGWravFdzybZZlenOKzgcsrASrPNeLNNUVSH5QsXhs/39P94tjR586objU01edFZx4r4hggRyrmCJNQkkH/rynSx0QDBx6MRAPkCYNRp22T9xgTPRnVCQwwvpQXW0jbjTYKghEVBcOmfPT944eCxk7+PT88WPTc+kfKcuZiI1bjKGSFUxRT7iMjL1QofQfDR1XchkNssk7ak47zZD2A2oVOetUk4K0goZVOeFAS5BoG4gYGimn/qj6GBr3r6f6pBUMwkvemE4y7ppoYoJZxQqoKEGiHkyh3c1OCtVIxvLC3LMY1hv82idkuEiYwg4bRNWWPyNSaBeBgDQfV7eN8qvsaOLSoalwqjhKhMpUCgHgTXUOizCTfrBG/emPO3zAXIztjEzBhMz9o0nBPEaLYpSwiCkhYFg0n/z4Hhoa6jP5wav3l7xHOdiaTn3hYiUuFYBgAEU4YlQWgMiHn9zoM++fUt6+/xuRepTt572uPPhAieT1mUZwUx0xZhSYchV0floaGhc91Hj58Zn7k9mog7M02ee8sSYllTaB1jjCQgH9OgNFWfLh3K5/37q/j+ZJjEq6/nBN3dbJJ0TjA1a2MjE1FokyCLVy4N//blge4Ts/NLC+3rctiLeQsR2yg3YCkxwhT5EtEb2lqjVOjoqN1fxZVY3QvRWot+2GLRdTmHqSlB55dmrvftO3igd/D84ISiG/WO5zeF2tNJwXWOKAA0JpaodkMbi5UKhbvwozgANOKfjqF32hz6acZWtRAsHv7+SO/+08d/ngKtyhrxz7S0BW90bvUUhXtSygBzfJ1dGxgrFAqr8GPxRnFLz1gsbWs7s47qWmS5K7/p0Y9rR+E7NelZTTUJddXxSyupfPBv+Q/AX2n/iUkotQAAAABJRU5ErkJggg==',
+            symbolRotate: 0,
+            symbolSize: [15, 20],
+            symbolPosition: 'end',
+            symbolOffset: [8, 0],
+            itemStyle: {
+                color: '#1dfffc',
+                shadowColor: 'rgba(29,255,252, 0.8)',
+                shadowBlur: 10,
+            },
+            tooltip: {
+                show: false
+            },
+        },
+        ],
     };
     option && myChart.setOption(option)
 }
@@ -876,21 +947,19 @@ const getAllHistory = async () => {
 }
 
 .heatmap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 0.5em;
-    background-image: url('../../assets/screen/(100).png');
-    background-size: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* margin-left: 0.5em; */
+
     box-sizing: border-box;
-    padding: 1em;
+    padding: 0.5em;
     height: 50%;
     width: 100%;
 }
 
 .bar {
+    background-image: url('../../assets/screen/(100).png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
     margin-left: 0.5em;
     background-size: 100%;
     background-position: center;
