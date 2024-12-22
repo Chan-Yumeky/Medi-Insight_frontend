@@ -17,10 +17,11 @@
         <!-- 图表区域，使用 grid 布局 -->
         <div class="echarts">
           <!-- 图表容器 -->
-          <div id="chart" class="chart-item chart1"></div>
-          <div id="chart2" class="chart-item chart2"></div>
-          <div id="chart3" class="chart-item chart3"></div>
           <div id="chart4" class="chart-item chart4"></div>
+          <div id="chart5" class="chart-item chart5"></div>
+          <div id="chart" class="chart-item chart1"></div>
+<!--          <div id="chart2" class="chart-item chart2"></div>-->
+<!--          <div id="chart3" class="chart-item chart3"></div>-->
         </div>
       </div>
 
@@ -81,22 +82,23 @@ import { useRouter } from 'vue-router';
 
 const initChart1 = async () => {
   const chart = echarts.init(document.getElementById("chart"), "light");
-  const chart2 = echarts.init(document.getElementById("chart2"), "light");
-  const chart3 = echarts.init(document.getElementById("chart3"), "light");
+  // const chart2 = echarts.init(document.getElementById("chart2"), "light");
+  // const chart3 = echarts.init(document.getElementById("chart3"), "light");
   const chart4 = echarts.init(document.getElementById("chart4"), "light");
+  const chart5 = echarts.init(document.getElementById("chart5"), "light");
 
   // 从后端获取数据
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("你的后端接口地址"); // 替换为实际的后端接口
-      return response.data; // 假设后端返回的数据结构符合你图表的需要
-    } catch (error) {
-      console.error("获取数据失败", error);
-      return null;
-    }
-  };
-
-  const data = await fetchData(); // 获取后端数据
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get("你的后端接口地址"); // 替换为实际的后端接口
+  //     return response.data; // 假设后端返回的数据结构符合你图表的需要
+  //   } catch (error) {
+  //     console.error("获取数据失败", error);
+  //     return null;
+  //   }
+  // };
+  //
+  // const data = await fetchData(); // 获取后端数据
 
   // 获取的后端数据的格式示例：
 
@@ -130,7 +132,7 @@ const initChart1 = async () => {
     yAxis: { type: "value" },
     series: [
       {
-        data: data ? data.patientFlow : [120, 200, 150, 80], // 后端数据替换静态数据
+        data: [49446, 52746, 43547, 51347], // 后端数据替换静态数据
         type: "line",
         smooth: true
       }
@@ -148,7 +150,7 @@ const initChart1 = async () => {
         type: "pie",
         radius: "70%", // 设置环形内外半径
         center: ["50%", "60%"], // 圆心位置居中
-        data: data ? data.monthlyFlow : [
+        data: [
           { value: 120, name: "Jan" },
           { value: 132, name: "Feb" },
           { value: 101, name: "Mar" },
@@ -187,18 +189,18 @@ const initChart1 = async () => {
     },
     yAxis: { type: "value" },
     series: [
-      { data: data ? data.weekFlow : [120, 200, 150, 80, 70, 110, 130], type: "bar" } // 后端数据替换静态数据
+      { data:[120, 200, 150, 80, 70, 110, 130], type: "bar" } // 后端数据替换静态数据
     ]
   };
 
   const chartOptions4 = {
-    title: { text: "接待患者总人数", left: "center" },
+    title: { text: "日接诊人数", left: "center" },
     series: [
       {
         type: 'pie',
         radius: ['50%', '70%'], // 环形内外半径
         center: ['50%', '50%'], // 圆心居中
-        data: data ? [{ value: data.totalPatients, name: '患者人数', itemStyle: { color: '#ebeafc' }, }] : [{ value: 1000, name: '患者人数', itemStyle: { color: '#ebeafc' }, }],
+        data: [{ value: 1000, name: '患者人数', itemStyle: { color: '#ebeafc' }, }],
         labelLine: { show: false }, // 隐藏连接线
         label: { show: false }, // 隐藏标签
       },
@@ -206,7 +208,35 @@ const initChart1 = async () => {
         type: 'pie',
         radius: ['0%', '50%'], // 内半径为 0，外半径为 50%
         center: ['50%', '50%'],
-        data: data ? [{ value: data.totalPatients, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }] : [{ value: 1000, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }],
+        data: [{ value: 504, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }],
+        labelLine: { show: false }, // 隐藏连接线
+        label: {
+          show: true,
+          position: 'center',
+          fontSize: 25, // 设置数字字体大小
+          fontWeight: 'bold',
+          color: '#6A5ACD', // 数字的颜色：蓝紫色
+          formatter: '{c}', // 显示数字
+        }
+      },
+    ]
+  };
+  const chartOptions5 = {
+    title: { text: "月接诊人数", left: "center" },
+    series: [
+      {
+        type: 'pie',
+        radius: ['50%', '70%'], // 环形内外半径
+        center: ['50%', '50%'], // 圆心居中
+        data: [{ value: 1000, name: '患者人数', itemStyle: { color: '#ebeafc' }, }],
+        labelLine: { show: false }, // 隐藏连接线
+        label: { show: false }, // 隐藏标签
+      },
+      {
+        type: 'pie',
+        radius: ['0%', '50%'], // 内半径为 0，外半径为 50%
+        center: ['50%', '50%'],
+        data: [{ value: 16487, name: '患者人数', itemStyle: { color: '#e3e4f9' }, }],
         labelLine: { show: false }, // 隐藏连接线
         label: {
           show: true,
@@ -222,16 +252,18 @@ const initChart1 = async () => {
 
   // 设置图表选项
   chart.setOption(chartOptions);
-  chart2.setOption(chartOptions2);
-  chart3.setOption(chartOptions3);
+  // chart2.setOption(chartOptions2);
+  // chart3.setOption(chartOptions3);
   chart4.setOption(chartOptions4);
+  chart5.setOption(chartOptions5);
 
   // 图表大小自适应
   window.addEventListener("resize", function () {
     chart.resize();
-    chart2.resize();
-    chart3.resize();
+    // chart2.resize();
+    // chart3.resize();
     chart4.resize();
+    chart5.resize();
   });
 };
 </script>
@@ -268,15 +300,12 @@ const initChart1 = async () => {
 
 .echarts {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* 两列 */
-  grid-template-rows: repeat(2, 1fr);
-  /* 两行 */
-  gap: 1rem;
-  /* 图表之间的间隔 */
+  grid-template-columns: repeat(2, 1fr); /* 第一行两列 */
+  grid-template-rows: 40vh 40vh;        /* 两行自动高度 */
+  gap: 1rem;                            /* 图表之间的间距 */
   width: 50%;
   height: 100%;
-  padding: 1rem;
+  padding: 2rem;
   box-sizing: border-box;
 }
 
@@ -285,6 +314,10 @@ const initChart1 = async () => {
   height: 100%;
 }
 
+.chart-item:nth-child(3) {
+  grid-column: span 2; /* 第二行的图表跨两列 */
+  margin-top: 3vw;
+}
 
 .main-title {
   width: 100%;
