@@ -25,18 +25,22 @@ function takeAccessToken() {
     return authObj.token
 }
 
-function storeAccessToken(remember, token, expire, id) {
+function storeAccessToken(remember, data) {
+    // 保存完整的登录返回数据
     const authObj = {
-        token: token,
-        expire: expire,
-        id: id
+        token: data.token,
+        expire: data.expire,
+        id: data.id,
+        username: data.username,
+        role: data.role,          // 管理员(admin)或医生(doctor)
+        isExpert: data.isExpert,  // 是否专家医生
+        department: data.department
     }
+    
     const str = JSON.stringify(authObj)
     if (remember)
-        // 可以一直存储
         localStorage.setItem(authItemName, str)
     else
-        // 只针对会话存储
         sessionStorage.setItem(authItemName, str)
 }
 
@@ -83,11 +87,10 @@ function login(username, password, remember, success, failure = defaultFailure) 
         username: username,
         password: password
     }, {
-        // security只支持表单提交，而默认是JSON
         'Content-Type': 'application/x-www-form-urlencoded'
     }, (data) => {
-        storeAccessToken(remember, data.token, data.expire, data.id)
-        ElMessage.success(`登录成功，欢迎 ${data.id} ${data.username} 来到我们的系统`)
+        storeAccessToken(remember, data)
+        ElMessage.success(`登录成功，欢迎 ${data.username} 来到我们的系统`)
         success(data)
     }, failure)
 }

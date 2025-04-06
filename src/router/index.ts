@@ -5,8 +5,9 @@ import ExplorePage from "@/pages/ExplorePage.vue";
 import AttendancePage from "@/pages/AttendancePage.vue";
 import ProcessPage from "@/pages/ProcessPage.vue";
 import MainPage from "@/pages/MainPage.vue";
-import {unauthorized} from "@/net/index.js";
+// import {unauthorized} from "@/net/index.js";
 import HyperInsight from "@/components/Outpatient/HyperInsight.vue";
+import SchedulePage from "@/pages/SchedulePage.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -41,6 +42,11 @@ const router = createRouter({
                             name:'attendance',
                             path:'attendance',
                             component:AttendancePage
+                        },
+                        {
+                            name:'schedule',
+                            path:'schedule',
+                            component:SchedulePage
                         },
                     ]
                 },
